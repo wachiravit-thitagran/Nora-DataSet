@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0",
+  "dataset": {
+    "id": "nora-ai-dataset",
+    "version": "0.1.0-draft",
+    "released_at": null,
+    "status": "draft",
+    "title": {
+      "th": "ชุดข้อมูลท่ารำโนรา (Nora AI Dataset)",
+      "en": "Nora Dance Dataset"
+    },
+    "summary": {
+      "th": "ชุดข้อมูลท่ารำโนราสำหรับงานวิจัยด้านปัญญาประดิษฐ์ ประกอบด้วยจุดสำคัญของร่างกาย (keypoints) ภาพท่ารำอ้างอิง ภาพท่าครู 12 ท่า วิดีโอที่สร้างด้วย AI และโค้ดของกระบวนการประมวลผล",
+      "en": "A dataset of Nora (southern Thai) dance for AI research: body keypoints, reference pose images, the twelve canonical teacher poses, AI-generated video, and the processing pipeline code."
+    },
+    "description": {
+      "th": "โนราเป็นนาฏศิลป์พื้นบ้านภาคใต้ของประเทศไทย ได้รับการขึ้นทะเบียนเป็นมรดกภูมิปัญญาทางวัฒนธรรมที่จับต้องไม่ได้ของมนุษยชาติโดยยูเนสโกในปี พ.ศ. 2564 ชุดข้อมูลนี้จัดทำขึ้นเพื่อสนับสนุนการศึกษาและการสืบทอดท่ารำด้วยเทคโนโลยีปัญญาประดิษฐ์ โดยรวบรวมท่ารำมาตรฐาน 12 ท่า พร้อมข้อมูลโครงร่างที่สกัดด้วยคอมพิวเตอร์วิทัศน์",
+      "en": "Nora is a folk performing art of southern Thailand, inscribed on UNESCO's Representative List of the Intangible Cultural Heritage of Humanity in 2021. This dataset supports research and transmission of the art form through AI, covering the twelve canonical poses together with computer-vision-extracted skeletal data."
+    },
+    "license": {
+      "id": "TBD",
+      "name": {
+        "th": "อยู่ระหว่างพิจารณา",
+        "en": "To be determined"
+      },
+      "url": null,
+      "status": "pending",
+      "note": {
+        "th": "สัญญาอนุญาตอยู่ระหว่างการพิจารณาของผู้บริหาร ระหว่างนี้การนำข้อมูลไปใช้ต้องได้รับอนุญาตเป็นลายลักษณ์อักษรจากผู้จัดทำก่อน",
+        "en": "The licence is pending approval. Until it is published, any use of this data requires prior written permission from the maintainers."
+      }
+    },
+    "citation": {
+      "text": "TBD",
+      "bibtex": null
+    },
+    "contact": {
+      "name": "TBD",
+      "email": "TBD",
+      "organization": "TBD"
+    },
+    "credits": [
+      {
+        "role": {
+          "th": "ภาพต้นฉบับ",
+          "en": "Source imagery"
+        },
+        "value": {
+          "th": "ภาพสแกนจากหนังสือ (รอระบุชื่อหนังสือและปีที่พิมพ์)",
+          "en": "Scanned from a printed book (title and year of publication to be confirmed)"
+        }
+      },
+      {
+        "role": {
+          "th": "ผู้ตรวจสอบท่ารำ",
+          "en": "Dance verification"
+        },
+        "value": {
+          "th": "รอผู้เชี่ยวชาญด้านโนราตรวจสอบ",
+          "en": "Pending review by Nora practitioners"
+        }
+      }
+    ],
+    "disclaimer": {
+      "th": "ภาพในหมวด “ซ่อมแซม” เป็นภาพที่สร้างขึ้นใหม่ด้วยปัญญาประดิษฐ์จากภาพสแกนต้นฉบับ ไม่ใช่การกู้คืนภาพถ่ายเดิม ใบหน้าในภาพทั้งหมดเป็นใบหน้าที่ AI สังเคราะห์ขึ้น และไม่ได้แทนอัตลักษณ์ของบุคคลจริงในภาพต้นฉบับ ทุกรายการระบุสถานะไว้ในฟิลด์ identity_match",
+      "en": "Images marked “restored” are AI-generated reconstructions derived from scanned originals, not recoveries of the original photographs. All faces are synthetic and do not represent the identity of any person in the source images. Per-item status is recorded in the identity_match field."
+    }
+  },
+  "bundles": [
+    {
+      "id": "keypoints",
+      "title": {
+        "th": "จุดสำคัญของร่างกายและคลังท่า",
+        "en": "Keypoints & pose library"
+      },
+      "description": {
+        "th": "pose_library.json (63 รายการ), keypoints รายท่า, เมทริกซ์ระยะห่างระหว่างท่า, กราฟการเปลี่ยนท่า และ manifest ของภาพทั้งหมด",
+        "en": "pose_library.json (63 entries), per-pose keypoints, inter-pose distance matrix, transition graph, and the image manifest."
+      },
+      "filename": null,
+      "bytes": null,
+      "sha256": null,
+      "file_count": null,
+      "formats": [
+        "json",
+        "csv"
+      ],
+      "updated_at": null,
+      "available": false
+    },
+    {
+      "id": "teacher-poses",
+      "title": {
+        "th": "ท่าครู 12 ท่า (ต้นฉบับ + ซ่อมแซม)",
+        "en": "Twelve teacher poses (original + restored)"
+      },
+      "description": {
+        "th": "ภาพสแกนต้นฉบับจากหนังสือคู่กับภาพที่ซ่อมแซมด้วย AI พร้อมไฟล์ label ชื่อท่า คำอธิบาย และสถานะการตรวจอัตลักษณ์",
+        "en": "Scanned book originals paired with AI-restored versions, plus a label file giving pose names, descriptions, and identity-verification status."
+      },
+      "filename": null,
+      "bytes": null,
+      "sha256": null,
+      "file_count": null,
+      "formats": [
+        "png",
+        "json"
+      ],
+      "updated_at": null,
+      "available": false
+    },
+    {
+      "id": "reference-images",
+      "title": {
+        "th": "ภาพท่ารำและเครื่องแต่งกายอ้างอิง",
+        "en": "Reference pose & costume images"
+      },
+      "description": {
+        "th": "ภาพท่ามือพื้นฐาน ภาพท่ารำเต็มตัว ภาพเครื่องแต่งกาย และภาพ overlay โครงกระดูก",
+        "en": "Basic hand gestures, full-body poses, costume references, and skeleton overlay images."
+      },
+      "filename": null,
+      "bytes": null,
+      "sha256": null,
+      "file_count": null,
+      "formats": [
+        "jpg",
+        "png"
+      ],
+      "updated_at": null,
+      "available": false
+    },
+    {
+      "id": "generated-videos",
+      "title": {
+        "th": "วิดีโอที่สร้างด้วย AI",
+        "en": "AI-generated video"
+      },
+      "description": {
+        "th": "วิดีโอลำดับการรำที่สร้างด้วยปัญญาประดิษฐ์ และวิดีโอคุมท่าแบบโครงกระดูก (OpenPose driving video)",
+        "en": "AI-generated dance sequences and the OpenPose skeleton driving video."
+      },
+      "filename": null,
+      "bytes": null,
+      "sha256": null,
+      "file_count": null,
+      "formats": [
+        "mp4"
+      ],
+      "updated_at": null,
+      "available": false
+    },
+    {
+      "id": "pipeline-code",
+      "title": {
+        "th": "โค้ดกระบวนการประมวลผล",
+        "en": "Processing pipeline code"
+      },
+      "description": {
+        "th": "สคริปต์สกัด keypoints, การซ่อมแซมด้วย VLM, การสร้าง control map และเอกสารประกอบ",
+        "en": "Keypoint extraction scripts, VLM-based repair, control-map generation, and accompanying documentation."
+      },
+      "filename": null,
+      "bytes": null,
+      "sha256": null,
+      "file_count": null,
+      "formats": [
+        "py",
+        "ipynb",
+        "md"
+      ],
+      "updated_at": null,
+      "available": false
+    }
+  ],
+  "poses_file": "poses.json"
+}

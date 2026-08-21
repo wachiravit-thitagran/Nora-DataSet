@@ -1,0 +1,127 @@
+{
+  "_comment": [
+    "Whitelist packaging config. Nothing is included unless it is named here.",
+    "This is deliberate: the source folder also contains procurement documents,",
+    "invoices, and third-party video that must never reach a published bundle.",
+    "A blacklist would eventually miss one of them; a whitelist cannot."
+  ],
+  "source_root": "~/Documents/Nora",
+  "output_root": "./dist",
+  "version": "0.1.0-draft",
+
+  "global_exclude": [
+    ".DS_Store",
+    "._*",
+    "~$*",
+    ".bak_*",
+    "*.tmp",
+    "Thumbs.db"
+  ],
+
+  "bundles": [
+    {
+      "id": "keypoints",
+      "filename": "nora-keypoints-{version}.zip",
+      "items": [
+        { "src": "nora_pipeline_output/pose_library.json", "dest": "pose_library.json" },
+        { "src": "nora_pipeline_output/manifest.csv", "dest": "manifest.csv" },
+        { "src": "nora_pipeline_output/manifest.json", "dest": "manifest.json" },
+        { "src": "nora_pipeline_output/transitions.json", "dest": "transitions.json" },
+        { "src": "nora_pipeline_output/choreography.json", "dest": "choreography.json" },
+        { "src": "nora_pipeline_output/pose_distance_matrix.csv", "dest": "pose_distance_matrix.csv" },
+        {
+          "src": "nora_pipeline_output/keypoints",
+          "dest": "keypoints",
+          "include": ["*.json"],
+          "exclude": ["orig_*.json"],
+          "exclude_reason": "orig_*.json filenames are Facebook photo IDs; excluded pending provenance clearance"
+        }
+      ]
+    },
+
+    {
+      "id": "teacher-poses",
+      "filename": "nora-teacher-poses-{version}.zip",
+      "items": [
+        {
+          "src": "เปรียบเทียบ-ต้นฉบับ-ซ่อมแซม",
+          "dest": "images",
+          "include": ["*.png"],
+          "exclude": ["07_*"],
+          "exclude_reason": "pair 07 is unresolved against the canonical 12-pose list; see poses.json unmapped[]"
+        },
+        { "src": "เปรียบเทียบ-ต้นฉบับ-ซ่อมแซม/README-การจับคู่.md", "dest": "PAIRING-NOTES.md" }
+      ],
+      "catalog_files": [
+        { "src": "poses.json", "dest": "labels.json" }
+      ]
+    },
+
+    {
+      "id": "reference-images",
+      "filename": "nora-reference-images-{version}.zip",
+      "items": [
+        {
+          "src": ".",
+          "dest": "hand_gestures",
+          "include": ["จีบ*.jpg", "ตั้งวง.jpg", "วง*.jpg", "ล่อแก้ว.jpg"],
+          "recursive": false
+        },
+        {
+          "src": ".",
+          "dest": "poses",
+          "include": ["ท่า*.jpg"],
+          "recursive": false
+        },
+        {
+          "src": "nora_pipeline_output/controlmaps",
+          "dest": "controlmaps",
+          "include": ["*.png", "*.jpg"]
+        },
+        {
+          "src": "nora_pipeline_output/overlays",
+          "dest": "overlays",
+          "include": ["*.png", "*.jpg"]
+        }
+      ],
+      "_excluded_on_purpose": {
+        "costume_images": "tha79-86.jpg, 14184-BIG.jpg, 9-4.jpg, 470191295_*.jpg — provenance unconfirmed, at least one is a Facebook image",
+        "character_images": "โนราคล้ายขี้หนอน/ — book scans, pending copyright confirmation"
+      }
+    },
+
+    {
+      "id": "generated-videos",
+      "filename": "nora-generated-videos-{version}.zip",
+      "items": [
+        { "src": "final", "dest": "sequences", "include": ["*.mp4"] },
+        { "src": "nora_pipeline_output/nora_openpose_drive.mp4", "dest": "openpose_drive.mp4" }
+      ],
+      "_excluded_on_purpose": {
+        "snaptik_*.mp4": "downloaded from TikTok — third-party content, must not be redistributed",
+        "roi_wilor_overlay*.mp4": "derived from the TikTok source video"
+      }
+    },
+
+    {
+      "id": "pipeline-code",
+      "filename": "nora-pipeline-code-{version}.zip",
+      "items": [
+        { "src": "colab_roi_wilor.py", "dest": "colab_roi_wilor.py" },
+        { "src": "colab_roi_wilor_batch.py", "dest": "colab_roi_wilor_batch.py" },
+        { "src": "colab_wilor.py", "dest": "colab_wilor.py" },
+        { "src": "foot_skeleton.py", "dest": "foot_skeleton.py" },
+        { "src": "gemini_rig.py", "dest": "gemini_rig.py" },
+        { "src": "gemini_repair.py", "dest": "gemini_repair.py" },
+        { "src": "gemini_repair_router.py", "dest": "gemini_repair_router.py" },
+        { "src": "gemini_repair_flagonly.py", "dest": "gemini_repair_flagonly.py" },
+        { "src": "openrouter_rig.py", "dest": "openrouter_rig.py" },
+        { "src": "WiLoR_selfupload.ipynb", "dest": "WiLoR_selfupload.ipynb" },
+        { "src": "rig_extraction/scripts", "dest": "rig_extraction/scripts", "include": ["*.py", "*.sh", "*.md"] },
+        { "src": "rig_extraction", "dest": "rig_extraction/docs", "include": ["*.md", "*.ipynb"], "recursive": false },
+        { "src": "nora_pipeline_output/REPORT.md", "dest": "docs/PIPELINE_REPORT.md" },
+        { "src": "nora_pipeline_output/PROMPT_PACK.md", "dest": "docs/PROMPT_PACK.md" }
+      ]
+    }
+  ]
+}

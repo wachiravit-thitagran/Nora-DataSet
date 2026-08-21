@@ -1,0 +1,95 @@
+# Host nginx configuration for the Nora dataset service on ainora-agent.
+#
+# nginx reserves exactly one path: /dataset/
+# Everything behind it — the page, the API, the access form, the bundle
+# downloads — is routed to the application and handled there.
+#
+# Paste this into the existing server { } block that serves the ainora domain.
+
+location /dataset/ {
+    proxy_pass         http://127.0.0.1:10095/;
+    proxy_http_version 1.1;
+
+    # $http_host, not $host, to match the convention used by the other
+    # configs on this server. It passes the Host header through verbatim,
+    # keeping the port if the client sent one. The only case where the two
+    # differ in practice is a request with no Host header at all (HTTP/1.0
+    # clients and scanners), where $http_host is empty and $host falls back
+    # to server_name. The application handles a missing Host fine — verified,
+    # it still returns 200 — so this makes no difference here.
+    proxy_set_header Host               $http_host;
+    proxy_set_header X-Real-IP          $remote_addr;
+    proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto  $scheme;
+    proxy_set_header X-Forwarded-Prefix /dataset;
+
+    proxy_connect_timeout 5s;
+    proxy_read_timeout    60s;
+
+    # Required, not optional. Bundles are hundreds of megabytes; with the
+    # default settings nginx writes each download to proxy_temp_path before
+    # sending it to the client — a full extra disk write per download.
+    # Confirmed in the error log as:
+    #   "an upstream response is buffered to a temporary file"
+    proxy_buffering          off;
+    proxy_max_temp_file_size 0;
+
+    # Downloads take as long as the client's connection needs.
+    proxy_send_timeout 1h;
+}
+
+
+# Optional three-liner so the bare path works too. Without it,
+# https://<host>/dataset (no trailing slash) returns 404, because the block
+# above only matches the version with the slash.
+
+location = /dataset {
+    return 301 /dataset/;
+}
+
+
+# ============================================================================
+# What must match on the application side
+# ============================================================================
+#
+# In docker-compose.yml:
+#
+#   ports:       "127.0.0.1:10095:8000"   <- matches proxy_pass above
+#   ROOT_PATH:   /dataset                 <- matches the location path
+#   USE_XACCEL:  "false"                  <- the app serves the bytes
+#
+# The bundle files themselves are mounted into the container only:
+#
+#   volumes:     /srv/ainora/dataset:/data:ro
+#
+# nginx never touches them, so nginx and the container do not need to share
+# any filesystem.
+
+
+# ============================================================================
+# Verification after reload
+# ============================================================================
+#
+#   nginx -t && systemctl reload nginx
+#
+#   # 1. The application is up.
+#   curl -s https://<host>/dataset/api/health
+#   # -> {"status":"ok"}
+#
+#   # 2. A download without a token is refused.
+#   curl -s -o /dev/null -w '%{http_code}\n' \
+#        https://<host>/dataset/api/download/keypoints
+#   # -> 403
+#
+#   # 3. A real download returns the whole file.
+#   #    Mint a token with scripts/mint_token.py, then:
+#   curl -s -o /dev/null -w '%{http_code} %{size_download}\n' \
+#        "https://<host>/dataset/api/download/keypoints?t=<token>"
+#   # -> 200 and a size matching `bytes` in manifest.json.
+#
+#   # 4. Resume works.
+#   curl -s -r 0-99 -o /dev/null -w '%{http_code} %{size_download}\n' \
+#        "https://<host>/dataset/api/download/keypoints?t=<token>"
+#   # -> 206 100
+#
+# All four also run automatically in the Jenkins `Smoke tests` stage.

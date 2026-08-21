@@ -1,0 +1,52 @@
+# Deployment on ainora-agent.
+#
+# Two volumes with deliberately different permissions:
+#   - the bundle directory is mounted READ-ONLY; the app never writes there,
+#     and nginx serves those files directly without going through the app.
+#   - the database directory is the only writable path.
+
+services:
+  dataset-web:
+    image: ${IMAGE:-registry.example.com/ainora/dataset-web:latest}
+    container_name: ainora-dataset-web
+    restart: unless-stopped
+
+    # Bind to loopback only. The service is reachable exclusively through the
+    # host nginx, never directly from the network.
+    ports:
+      - "127.0.0.1:10095:8000"
+
+    environment:
+      # Required. Generate once with: openssl rand -hex 32
+      # Rotating this value immediately invalidates every outstanding
+      # download token.
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+
+      DATA_DIR: /data
+      DB_PATH: /var/lib/nora/access.sqlite3
+      ROOT_PATH: /dataset
+
+      # nginx reserves only /dataset/ and proxies everything to this service,
+      # so the application serves the bundle bytes itself.
+      USE_XACCEL: "false"
+      TOKEN_TTL_SECONDS: "86400"
+      RETENTION_DAYS: "730"
+      RATE_LIMIT_PER_HOUR: "10"
+      TRUST_FORWARDED_FOR: "true"
+
+    volumes:
+      - /srv/ainora/dataset:/data:ro
+      - /srv/ainora/dataset-db:/var/lib/nora
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    security_opt:
+      - no-new-privileges:true
+
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m

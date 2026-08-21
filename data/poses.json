@@ -1,0 +1,175 @@
+{
+  "schema_version": "1.0",
+  "vocabulary_source": "ต้นฉบับครูรำ/รายชื่อ-12-ท่ามาตรฐาน.md",
+  "note_th": "ชื่อหลัก (name_th) ยึดตามรายชื่อ 12 ท่ามาตรฐาน ส่วน aliases คือชื่ออื่นที่พบในโปรเจกต์ (ชื่อไฟล์จากหนังสือ / ชื่อไฟล์ rescale / id ใน pose_library.json) เก็บไว้เพื่อให้ค้นด้วยชื่อเดิมได้",
+  "note_en": "Primary names follow the project's canonical 12-pose list. Aliases record every other name the same pose appears under across the project, so older references remain searchable.",
+  "poses": [
+    {
+      "id": "NP001",
+      "name_th": "ท่าขุนศรัทธา",
+      "name_en": "Khun Sattha",
+      "description_th": "นั่งขัดสมาธิ แขนขวาชูขึ้น",
+      "description_en": "Seated cross-legged, right arm raised.",
+      "aliases": ["ท่าขุนศรัทธา คล้ายขี้หนอน", "char_khun_sattha"],
+      "pair_index": "02",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "verified"
+    },
+    {
+      "id": "NP002",
+      "name_th": "ท่าครู",
+      "name_en": "Thaa Khru (Teacher's pose)",
+      "description_th": "ยืนขาเดียว พนมมือระดับอก",
+      "description_en": "Standing on one leg, palms pressed together at chest level.",
+      "aliases": ["ท่าหน้าไม้", "ท่าครู คล้ายขี้หนอน"],
+      "pair_index": "10",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "verified"
+    },
+    {
+      "id": "NP003",
+      "name_th": "ท่าเขาควาย",
+      "name_en": "Khao Khwai (Buffalo horns)",
+      "description_th": "ย่อเข่ากว้าง แขนสองข้างชูโค้งเหนือศีรษะ",
+      "description_en": "Deep wide plié, both arms curved above the head.",
+      "aliases": ["ท่าเขาควาย คล้ายขี้หนอน", "pose_khao_kwai", "char_khao_kwai", "ท่าบัว"],
+      "pair_index": "11",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "verified"
+    },
+    {
+      "id": "NP004",
+      "name_th": "ท่าจีบหน้า",
+      "name_en": "Jeeb Naa",
+      "description_th": "ย่อเข่ากว้าง แขนสองข้างงอชูขึ้นข้างศีรษะ มือจีบ",
+      "description_en": "Wide plié, both arms bent beside the head, fingers in the jeeb gesture.",
+      "aliases": ["ท่าจีบหน้า คล้ายขี้หนอน", "char_jab_na"],
+      "pair_index": "04",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "verified"
+    },
+    {
+      "id": "NP005",
+      "name_th": "ท่าย่างสามขุม",
+      "name_en": "Yang Sam Khum",
+      "description_th": "ย่อเข่า แขนขวางอชูขึ้น แขนซ้ายเหยียดลงข้าง",
+      "description_en": "Plié, right arm bent and raised, left arm extended down to the side.",
+      "aliases": ["ท่าฉากน้อย", "char_yang_sam_khum"],
+      "pair_index": "05",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "mismatch",
+      "note_th": "ชื่อไฟล์ต้นฉบับกับไฟล์ซ่อมแซมใช้คนละชื่อ แต่ยืนยันจากท่าทางว่าเป็นท่าเดียวกัน"
+    },
+    {
+      "id": "NP006",
+      "name_th": "ท่าขี้หนอน",
+      "name_en": "Khi Non",
+      "description_th": "ยืนขาเดียว แอ่นหลัง แขนโอบเหนือศีรษะจับเท้า",
+      "description_en": "Standing on one leg, back arched, arms reaching over the head to grasp the foot.",
+      "aliases": ["ท่าขี้หนูร่อนรำ", "char_khi_non", "char_khi_non_b"],
+      "pair_index": "01",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "mismatch"
+    },
+    {
+      "id": "NP007",
+      "name_th": "ท่าเหาะเหิน",
+      "name_en": "Hoh Hoen (Flying)",
+      "description_th": "ยืนขาเดียว ยกเข่า แขนขวาชูสูง มือซ้ายเท้าเอว",
+      "description_en": "Standing on one leg with knee raised, right arm high, left hand on the hip.",
+      "aliases": ["ท่าเหาะเหิน คล้ายขี้หนอน", "char_hoh_hoen"],
+      "pair_index": "12",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "verified"
+    },
+    {
+      "id": "NP008",
+      "name_th": "ท่าลงฉากน้อย",
+      "name_en": "Long Chak Noi",
+      "description_th": "ยกขางอไปข้างหน้า แขนขวาชูสูง แขนซ้ายเหยียดข้าง",
+      "description_en": "Leg lifted and bent forward, right arm high, left arm extended to the side.",
+      "aliases": ["ท่าฉากใหญ่", "ท่าลงฉากน้อย เล็บฟ้อน คล้ายขี้หนอน"],
+      "pair_index": "06",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "mismatch"
+    },
+    {
+      "id": "NP009",
+      "name_th": "ท่าจับระบำ",
+      "name_en": "Jab Rabam (Paired dance)",
+      "description_th": "สองคน ย่อเข่า แขนนอกชูสูง จับมือกัน",
+      "description_en": "Two dancers in plié, outer arms raised, inner hands joined.",
+      "aliases": ["ท่าจับระบำ ขวา คล้ายขี้หนอน", "ท่าจับระบำ ซ้าย คล้ายขี้หนอน"],
+      "pair_index": "03",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "partial",
+      "note_th": "ต้นฉบับเป็นภาพคู่ 2 คน ภาพซ่อมแซมแยกเป็น 2 ไฟล์ (ขวา/ซ้าย) ตรงกับต้นฉบับเฉพาะคนขวา"
+    },
+    {
+      "id": "NP010",
+      "name_th": "ท่าพรหมสี่หน้า",
+      "name_en": "Phrom Si Naa (Four-faced Brahma)",
+      "description_th": "ย่อเข่ากว้าง พนมมือระดับอก",
+      "description_en": "Wide plié, palms pressed together at chest level.",
+      "aliases": ["ท่าสามย่าง", "ท่าพรหทสี่หน้า", "pose_phanom_mue", "ท่าพนมมือ"],
+      "pair_index": "09",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "mismatch"
+    },
+    {
+      "id": "NP011",
+      "name_th": "ท่าซัดหวางอก",
+      "name_en": "Sat Wang Ok",
+      "description_th": "ยืนขาเดียว แขนกางระดับอก",
+      "description_en": "Standing on one leg, arms spread at chest level.",
+      "aliases": ["ท่าวงอก", "ท่าซัดหวางอก คล้ายขี้หนอน"],
+      "pair_index": "08",
+      "has_original": true,
+      "has_restored": true,
+      "identity_match": "mismatch"
+    },
+    {
+      "id": "NP012",
+      "name_th": "ท่าแมงมุมชักไย",
+      "name_en": "Maeng Mum Chak Yai (Spider spinning web)",
+      "description_th": "ตีลังกา ม้วนหัวลงพื้น",
+      "description_en": "Tumbling motion, rolling head-down to the floor.",
+      "aliases": ["ท่าแมลงมุมชักใย"],
+      "pair_index": "13",
+      "has_original": true,
+      "has_restored": false,
+      "identity_match": "not_applicable",
+      "note_th": "ยังไม่มีภาพซ่อมแซม และในภาพต้นฉบับก้มหน้าลงพื้นจึงตรวจอัตลักษณ์ไม่ได้"
+    }
+  ],
+  "unmapped": [
+    {
+      "pair_index": "07",
+      "file_original": "07_ท่าพรหมสี่หน้า_A-ต้นฉบับ.png",
+      "file_restored": "07_ท่าพรหมสี่หน้า_B-ซ่อมแซม.png",
+      "status": "needs_review",
+      "note_th": "ชื่อไฟล์ระบุว่าเป็นท่าพรหมสี่หน้า แต่ตำแหน่งท่าพรหมสี่หน้าในรายชื่อ 12 ท่ามาตรฐานถูกจับคู่กับคู่ที่ 09 ไปแล้ว จึงยังสรุปไม่ได้ว่าคู่นี้คือท่าใดในรายชื่อ หรือเป็นท่านอกรายชื่อ — รอผู้เชี่ยวชาญตรวจก่อนใส่ลงชุดข้อมูลที่เผยแพร่",
+      "note_en": "Filename says Phrom Si Naa, but that canonical slot is already matched to pair 09. Pending expert review; excluded from the published set until resolved."
+    }
+  ],
+  "extra_terms": [
+    {
+      "name_th": "ท่าเทวดา",
+      "note_th": "ท่าเขาควาย/พรหมสี่หน้า ที่เปลี่ยนขาจากย่อเป็นยืดตรง — ไม่อยู่ใน 12 ท่ามาตรฐาน"
+    },
+    {
+      "name_th": "ท่าใหม่",
+      "note_th": "ท่าที่ออกแบบขึ้นใหม่ในโปรเจกต์นี้ ปลายทางของหลายวิดีโอใน final/ — ไม่อยู่ใน 12 ท่ามาตรฐาน"
+    }
+  ]
+}

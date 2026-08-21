@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ชุดข้อมูลท่ารำโนรา · Nora Dance Dataset</title>
+<meta name="description" content="ชุดข้อมูลท่ารำโนราสำหรับงานวิจัยด้านปัญญาประดิษฐ์ · A dataset of Nora dance for AI research.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="skip_to_content">ข้ามไปยังเนื้อหาหลัก</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text" data-field="dataset.title">&nbsp;</span>
+    </div>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="#about" data-i18n="nav_about">เกี่ยวกับชุดข้อมูล</a>
+      <a href="#poses" data-i18n="nav_poses">ท่ารำ</a>
+      <a href="#download" data-i18n="nav_download">ดาวน์โหลด</a>
+      <a href="#usage" data-i18n="nav_usage">วิธีใช้</a>
+      <a href="#terms" data-i18n="nav_terms">เงื่อนไขและการอ้างอิง</a>
+    </nav>
+    <button type="button" id="lang-toggle" class="lang-toggle" data-i18n="switch_to">English</button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="status-pill" id="status-pill" hidden></p>
+      <h1 data-field="dataset.title">&nbsp;</h1>
+      <p class="lede" data-field="dataset.summary">&nbsp;</p>
+      <dl class="meta-row">
+        <div>
+          <dt data-i18n="version_label">เวอร์ชัน</dt>
+          <dd data-field="dataset.version">—</dd>
+        </div>
+        <div>
+          <dt data-i18n="updated_label">ปรับปรุงล่าสุด</dt>
+          <dd data-field="dataset.released_at">—</dd>
+        </div>
+        <div>
+          <dt data-i18n="license_label">สัญญาอนุญาต</dt>
+          <dd data-field="dataset.license">—</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="about" class="wrap section">
+    <h2 data-i18n="about_heading">เกี่ยวกับชุดข้อมูล</h2>
+    <p class="prose" data-field="dataset.description">&nbsp;</p>
+
+    <div class="callout callout-warning" id="disclaimer-box">
+      <h3 data-i18n="disclaimer_heading">ข้อควรทราบก่อนใช้ข้อมูล</h3>
+      <p data-field="dataset.disclaimer">&nbsp;</p>
+    </div>
+  </section>
+
+  <section id="poses" class="wrap section">
+    <h2 data-i18n="poses_heading">ท่ารำมาตรฐาน 12 ท่า</h2>
+    <p class="prose" data-i18n="poses_intro"></p>
+
+    <div class="table-scroll">
+      <table class="pose-table">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="poses_col_id">รหัส</th>
+            <th scope="col" data-i18n="poses_col_name">ชื่อท่า</th>
+            <th scope="col" data-i18n="poses_col_desc">ลักษณะท่า</th>
+            <th scope="col" data-i18n="poses_col_alias">ชื่ออื่นที่พบ</th>
+            <th scope="col" data-i18n="poses_col_status">สถานะภาพ</th>
+          </tr>
+        </thead>
+        <tbody id="pose-rows">
+          <tr><td colspan="5" class="muted" data-i18n="loading">กำลังโหลด…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="unmapped-block" hidden>
+      <h3 data-i18n="unmapped_heading">รายการที่รอการตรวจสอบ</h3>
+      <ul class="note-list" id="unmapped-list"></ul>
+    </div>
+  </section>
+
+  <section id="download" class="wrap section">
+    <h2 data-i18n="download_heading">ดาวน์โหลดชุดข้อมูล</h2>
+    <p class="prose" data-i18n="download_intro"></p>
+
+    <div class="grant-banner" id="grant-banner" hidden>
+      <strong data-i18n="access_granted">เปิดสิทธิ์ดาวน์โหลดแล้ว</strong>
+      <span id="grant-detail"></span>
+    </div>
+
+    <div class="bundle-grid" id="bundle-grid"></div>
+
+    <div class="access-card" id="access-card">
+      <h3 data-i18n="form_heading">ขอสิทธิ์ดาวน์โหลด</h3>
+      <form id="access-form" novalidate>
+        <div class="field">
+          <label for="f-email" data-i18n="form_email">อีเมล</label>
+          <input type="email" id="f-email" name="email" required autocomplete="email" inputmode="email">
+          <p class="hint" data-i18n="form_email_hint"></p>
+        </div>
+
+        <div class="field">
+          <label for="f-org">
+            <span data-i18n="form_org">หน่วยงาน / สังกัด</span>
+            <span class="optional" data-i18n="form_org_optional">ไม่บังคับ</span>
+          </label>
+          <input type="text" id="f-org" name="organization" autocomplete="organization" maxlength="200">
+        </div>
+
+        <div class="field">
+          <label for="f-purpose" data-i18n="form_purpose">วัตถุประสงค์การนำไปใช้</label>
+          <select id="f-purpose" name="purpose" required>
+            <option value="" data-i18n="form_purpose_placeholder">เลือกวัตถุประสงค์</option>
+            <option value="research" data-i18n="purpose_research"></option>
+            <option value="education" data-i18n="purpose_education"></option>
+            <option value="cultural_preservation" data-i18n="purpose_cultural_preservation"></option>
+            <option value="journalism" data-i18n="purpose_journalism"></option>
+            <option value="commercial" data-i18n="purpose_commercial"></option>
+            <option value="personal" data-i18n="purpose_personal"></option>
+            <option value="other" data-i18n="purpose_other"></option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-detail" data-i18n="form_detail">รายละเอียดเพิ่มเติม</label>
+          <textarea id="f-detail" name="purpose_detail" rows="3" maxlength="1000"></textarea>
+        </div>
+
+        <div class="field field-check">
+          <input type="checkbox" id="f-consent" name="consent" required>
+          <label for="f-consent">
+            <span id="consent-text" data-i18n="form_consent"></span>
+            <button type="button" class="linkish" id="open-privacy" data-i18n="form_privacy_link"></button>
+          </label>
+        </div>
+
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+
+        <button type="submit" class="btn btn-primary" id="submit-btn" data-i18n="form_submit">
+          ยืนยันและเปิดสิทธิ์ดาวน์โหลด
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section id="usage" class="wrap section">
+    <h2 data-i18n="usage_heading">วิธีใช้ข้อมูล</h2>
+    <p class="prose" data-i18n="usage_intro"></p>
+    <pre class="code"><code>import json
+
+with open("pose_library.json", encoding="utf-8") as f:
+    library = json.load(f)
+
+for entry in library["poses"]:
+    print(entry["id"], entry["name_th"], len(entry["keypoints"]))</code></pre>
+  </section>
+
+  <section id="terms" class="wrap section">
+    <h2 data-i18n="terms_heading">เงื่อนไขและการอ้างอิง</h2>
+
+    <div class="callout" id="license-box">
+      <h3 data-i18n="license_pending_title">สัญญาอนุญาตอยู่ระหว่างพิจารณา</h3>
+      <p data-field="dataset.license_note">&nbsp;</p>
+    </div>
+
+    <h3 data-i18n="citation_heading">การอ้างอิง</h3>
+    <pre class="code"><code id="citation-text">TBD</code></pre>
+
+    <h3 data-i18n="credits_heading">ผู้จัดทำและแหล่งที่มา</h3>
+    <ul class="note-list" id="credits-list"></ul>
+
+    <h3 data-i18n="contact_heading">ติดต่อ</h3>
+    <p id="contact-text" class="prose">—</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p data-field="dataset.title">&nbsp;</p>
+    <button type="button" class="linkish" id="open-privacy-footer" data-i18n="privacy_heading">ประกาศความเป็นส่วนตัว</button>
+  </div>
+</footer>
+
+<dialog id="privacy-dialog" class="dialog">
+  <article>
+    <h2 data-i18n="privacy_heading">ประกาศความเป็นส่วนตัว</h2>
+    <div id="privacy-body"></div>
+    <button type="button" class="btn" id="close-privacy" data-i18n="close">ปิด</button>
+  </article>
+</dialog>
+
+<script src="privacy.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

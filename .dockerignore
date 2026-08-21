@@ -1,0 +1,12 @@
+.git
+.gitignore
+dist/
+__pycache__/
+*.pyc
+.venv/
+venv/
+deploy/
+Jenkinsfile
+.gitlab-ci.yml
+*.md
+!README.md
