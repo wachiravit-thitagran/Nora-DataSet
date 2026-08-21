@@ -1,9 +1,17 @@
 # Deployment on ainora-agent.
 #
 # The dataset bundles ship inside the image (see the Dockerfile), so the only
-# volume left is the database directory — the one path this service writes to.
-# Nothing has to be copied to the server separately: deploying an image tag
-# deploys its data.
+# storage left is the database — the one thing this service writes. It lives in
+# a named Docker volume, not a host directory: the Jenkins agent has no rights
+# under /srv, and a named volume needs no directory created, no ownership set,
+# and no permissions granted on the host.
+#
+# The project name is pinned so the volume keeps the same identity no matter
+# which directory the compose file is run from. Without it, Compose derives the
+# project from the working directory, and a deploy from a different Jenkins
+# workspace would silently attach a fresh, empty database.
+
+name: nora-dataset
 
 services:
   dataset-web:
@@ -44,7 +52,7 @@ services:
       RATE_LIMIT_PER_HOUR: "${RATE_LIMIT_PER_HOUR:-10}"
 
     volumes:
-      - /srv/ainora/dataset-db:/var/lib/nora
+      - nora-dataset-db:/var/lib/nora
 
     logging:
       driver: json-file
@@ -58,3 +66,14 @@ services:
     read_only: true
     tmpfs:
       - /tmp:size=64m
+
+volumes:
+  nora-dataset-db:
+    # Explicit name, so the volume is not prefixed with the project name and
+    # stays findable as `docker volume inspect nora-dataset-db`.
+    #
+    # It holds the PDPA-governed access records. Never run a bare
+    # `docker volume prune` on this host: during a deploy the container is
+    # briefly recreated, and a prune in that window would take the database
+    # with it.
+    name: nora-dataset-db

@@ -120,13 +120,17 @@ git commit -m "release 0.1.0" && git push
 
 ## ติดตั้งบนเซิร์ฟเวอร์
 
-```bash
-# โครงไดเรกทอรี
-# ไม่ต้องมีโฟลเดอร์ dataset แล้ว — ไฟล์อยู่ใน image
-mkdir -p /srv/ainora/dataset-db /srv/ainora/dataset-web
-cp deploy/docker-compose.yml /srv/ainora/dataset-web/
+**ไม่ต้องสร้างโฟลเดอร์อะไรบนเซิร์ฟเวอร์เลย** — ไฟล์ zip อยู่ใน image
+ฐานข้อมูลอยู่ใน Docker volume ชื่อ `nora-dataset-db` ที่ Docker สร้างให้เอง
+และ compose file รันจาก workspace ของ Jenkins ไม่ได้ก๊อปไปวางบนเครื่อง
 
-# ความลับสำหรับเซ็นโทเคน — ใส่เป็นบรรทัด SECRET_KEY=... ในไฟล์ .env
+เหตุผล: ผู้ใช้ที่ Jenkins agent ใช้รันไม่มีสิทธิ์เขียนใต้ `/srv` และ named volume
+ไม่ต้องสร้างไดเรกทอรี ไม่ต้องตั้ง ownership ไม่ต้องขอสิทธิ์ใคร
+
+สิ่งเดียวที่ต้องเตรียมคือความลับสำหรับเซ็นโทเคน
+
+```bash
+# ใส่เป็นบรรทัด SECRET_KEY=... ในไฟล์ .env
 # แล้วอัปโหลดเป็น Jenkins file credential ชื่อ NORA_DATASET_ENV_PRODUCTION
 openssl rand -hex 32
 ```
@@ -214,14 +218,28 @@ SECRET_KEY=... python3 scripts/mint_token.py --ttl 300
 
 ฟอร์มเก็บอีเมลกับวัตถุประสงค์ = เก็บข้อมูลส่วนบุคคล มีภาระตามกฎหมายตามมา
 
-```bash
-D=/srv/ainora/dataset-db/access.sqlite3
+ฐานข้อมูลอยู่ใน Docker volume จึงต้องรันเครื่องมือ**ข้างในคอนเทนเนอร์**
+สคริปต์ติดมากับ image อยู่แล้ว
 
-python3 scripts/pdpa_tool.py stats   --db $D                    # สถิติภาพรวม
-python3 scripts/pdpa_tool.py export  --db $D -o requests.csv    # ส่งออกทั้งหมด
-python3 scripts/pdpa_tool.py subject --db $D --email a@b.com    # ขอดูข้อมูลตัวเอง
-python3 scripts/pdpa_tool.py erase   --db $D --email a@b.com    # ขอลบ
-python3 scripts/pdpa_tool.py purge   --db $D --days 730         # ลบตามระยะเก็บ
+```bash
+P="docker exec ainora-dataset-web python3 scripts/pdpa_tool.py"
+D=/var/lib/nora/access.sqlite3
+
+$P stats   --db $D                       # สถิติภาพรวม
+$P subject --db $D --email a@b.com       # ขอดูข้อมูลตัวเอง
+$P erase   --db $D --email a@b.com       # ขอลบ
+$P purge   --db $D --days 730            # ลบตามระยะเก็บ
+
+# ส่งออกเป็นไฟล์: เขียนออก stdout แล้วรับที่เครื่อง
+# (คอนเทนเนอร์เป็น read_only เขียนไฟล์ข้างในไม่ได้ ยกเว้น /tmp)
+$P export --db $D > requests.csv
+```
+
+สำรองฐานข้อมูลก่อนทำอะไรที่ลบข้อมูล
+
+```bash
+docker run --rm -v nora-dataset-db:/db -v "$PWD":/out alpine \
+  cp /db/access.sqlite3 /out/access-backup-$(date +%F).sqlite3
 ```
 
 การลบจะตัด `download_event` ออกจากเจ้าของข้อมูลก่อน (ตั้ง `request_id = NULL`)

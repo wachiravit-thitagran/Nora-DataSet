@@ -60,7 +60,7 @@ location = /dataset {
 #
 # The bundle files themselves are mounted into the container only:
 #
-#   volumes:     /srv/ainora/dataset:/data:ro
+#   volumes:     nora-dataset-db (named volume, database only)
 #
 # nginx never touches them, so nginx and the container do not need to share
 # any filesystem.

@@ -27,7 +27,10 @@ pipeline {
         REGISTRY_USER       = 'ci-bot'
         VERSION             = '1.0.0'
 
-        COMPOSE_FILE = '/srv/ainora/dataset-web/docker-compose.yml'
+        // Run from the checked-out workspace rather than a copy placed on the
+        // host: the agent has no rights under /srv, and this way the compose
+        // file that deploys is always the one from the commit being deployed.
+        COMPOSE_FILE = 'deploy/docker-compose.yml'
         SERVICE      = 'dataset-web'
         CONTAINER    = 'ainora-dataset-web'
 
@@ -222,11 +225,10 @@ pipeline {
 
                     echo 'Deploying to Production'
 
-                    // The database directory is the only writable volume; the
-                    // bundle directory is mounted read-only by the compose file.
+                    // Storage is a named Docker volume, so there is nothing to
+                    // create on the host first.
                     sh '''
                         set -eu
-                        mkdir -p /srv/ainora/dataset-db
 
                         # No `down` first: --force-recreate swaps the container
                         # in place, so the gap is a restart rather than a window
