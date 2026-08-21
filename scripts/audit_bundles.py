@@ -10,7 +10,7 @@ and, for text formats, what is inside them.
 Run it before every release, and in CI on any commit that touches
 `bundles.config.json`.
 
-    python3 scripts/audit_bundles.py dist/0.1.0-draft
+    python3 scripts/audit_bundles.py data/bundles/0.1.0-draft
 """
 
 from __future__ import annotations
@@ -113,9 +113,7 @@ def audit(directory: Path) -> int:
                 else:
                     # Name is clean — now read what is actually in it.
                     for reason, sample in scan_entry_content(archive, info):
-                        leaks.append(
-                            (archive_path.name, name, f"{reason}: {sample!r}")
-                        )
+                        leaks.append((archive_path.name, name, f"{reason}: {sample!r}"))
 
     print()
     if leaks:

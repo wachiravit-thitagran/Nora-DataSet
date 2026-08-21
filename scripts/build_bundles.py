@@ -102,6 +102,7 @@ def _scrub_references(value, dropped_ids: set[str]):
     was dropped. Those references are removed rather than taken as grounds to
     drop the record as well.
     """
+
     def is_dangling(text: str) -> bool:
         return bool(FACEBOOK_ID_RE.search(text)) or text in dropped_ids
 
