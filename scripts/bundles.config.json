@@ -8,7 +8,17 @@
   "source_root": "~/Documents/Nora",
   "output_root": "./dist",
   "version": "0.1.0-draft",
-
+  "_not_published": {
+    "_comment": "Deliberately outside the release. Recorded here so the reasoning is not lost, and so nobody re-adds them without reading why.",
+    "hand_gestures_and_costume_images": "จีบ*/วง*/ตั้งวง/ล่อแก้ว and tha79-86, 14184-BIG, 9-4, 470191295_* — outside the agreed scope, and the provenance of several is unconfirmed (at least one is a Facebook image)",
+    "book_scans": "โนราคล้ายขี้หนอน/ — copyright not yet confirmed; needs the book title and year of publication",
+    "controlmaps_and_overlays": "nora_pipeline_output/controlmaps, overlays — derived working files, outside the agreed scope",
+    "pipeline_code": "colab_*.py, gemini_*.py, rig_extraction/ — outside the agreed scope for this release",
+    "tiktok_sourced_video": "snaptik_*.mp4 and roi_wilor_overlay*.mp4 — third-party content, must not be redistributed",
+    "facebook_derived_keypoints": "nora_pipeline_output/keypoints/orig_*.json and cost_470191295_*.json — filenames are Facebook photo IDs. The same IDs are embedded as pose_id values inside pose_library.json, manifest.json and manifest.csv, so those three are rewritten at packaging time by the drop_out_of_scope record filter rather than copied.",
+    "keypoints_of_unpublished_images": "nora_pipeline_output/keypoints/hand_*.json and cost_*.json — coordinates extracted from the hand-gesture and costume images above. The images are outside the release, so their coordinates are too.",
+    "procurement": "TOR*.docx, .bak_TOR*, dreamina-invoice/, หลักฐานราคากลาง/ — internal documents"
+  },
   "global_exclude": [
     ".DS_Store",
     "._*",
@@ -17,110 +27,104 @@
     "*.tmp",
     "Thumbs.db"
   ],
-
   "bundles": [
     {
-      "id": "keypoints",
-      "filename": "nora-keypoints-{version}.zip",
-      "items": [
-        { "src": "nora_pipeline_output/pose_library.json", "dest": "pose_library.json" },
-        { "src": "nora_pipeline_output/manifest.csv", "dest": "manifest.csv" },
-        { "src": "nora_pipeline_output/manifest.json", "dest": "manifest.json" },
-        { "src": "nora_pipeline_output/transitions.json", "dest": "transitions.json" },
-        { "src": "nora_pipeline_output/choreography.json", "dest": "choreography.json" },
-        { "src": "nora_pipeline_output/pose_distance_matrix.csv", "dest": "pose_distance_matrix.csv" },
-        {
-          "src": "nora_pipeline_output/keypoints",
-          "dest": "keypoints",
-          "include": ["*.json"],
-          "exclude": ["orig_*.json"],
-          "exclude_reason": "orig_*.json filenames are Facebook photo IDs; excluded pending provenance clearance"
-        }
-      ]
-    },
-
-    {
-      "id": "teacher-poses",
-      "filename": "nora-teacher-poses-{version}.zip",
+      "id": "pose-images",
+      "filename": "nora-pose-images-{version}.zip",
       "items": [
         {
           "src": "เปรียบเทียบ-ต้นฉบับ-ซ่อมแซม",
           "dest": "images",
-          "include": ["*.png"],
-          "exclude": ["07_*"],
+          "include": [
+            "*.png"
+          ],
+          "exclude": [
+            "07_*"
+          ],
           "exclude_reason": "pair 07 is unresolved against the canonical 12-pose list; see poses.json unmapped[]"
         },
-        { "src": "เปรียบเทียบ-ต้นฉบับ-ซ่อมแซม/README-การจับคู่.md", "dest": "PAIRING-NOTES.md" }
-      ],
-      "catalog_files": [
-        { "src": "poses.json", "dest": "labels.json" }
-      ]
-    },
-
-    {
-      "id": "reference-images",
-      "filename": "nora-reference-images-{version}.zip",
-      "items": [
         {
-          "src": ".",
-          "dest": "hand_gestures",
-          "include": ["จีบ*.jpg", "ตั้งวง.jpg", "วง*.jpg", "ล่อแก้ว.jpg"],
-          "recursive": false
-        },
-        {
-          "src": ".",
-          "dest": "poses",
-          "include": ["ท่า*.jpg"],
-          "recursive": false
-        },
-        {
-          "src": "nora_pipeline_output/controlmaps",
-          "dest": "controlmaps",
-          "include": ["*.png", "*.jpg"]
-        },
-        {
-          "src": "nora_pipeline_output/overlays",
-          "dest": "overlays",
-          "include": ["*.png", "*.jpg"]
+          "src": "เปรียบเทียบ-ต้นฉบับ-ซ่อมแซม/README-การจับคู่.md",
+          "dest": "PAIRING-NOTES.md"
         }
       ],
-      "_excluded_on_purpose": {
-        "costume_images": "tha79-86.jpg, 14184-BIG.jpg, 9-4.jpg, 470191295_*.jpg — provenance unconfirmed, at least one is a Facebook image",
-        "character_images": "โนราคล้ายขี้หนอน/ — book scans, pending copyright confirmation"
-      }
+      "catalog_files": [
+        {
+          "src": "poses.json",
+          "dest": "labels.json"
+        }
+      ]
     },
-
     {
       "id": "generated-videos",
       "filename": "nora-generated-videos-{version}.zip",
       "items": [
-        { "src": "final", "dest": "sequences", "include": ["*.mp4"] },
-        { "src": "nora_pipeline_output/nora_openpose_drive.mp4", "dest": "openpose_drive.mp4" }
-      ],
-      "_excluded_on_purpose": {
-        "snaptik_*.mp4": "downloaded from TikTok — third-party content, must not be redistributed",
-        "roi_wilor_overlay*.mp4": "derived from the TikTok source video"
-      }
+        {
+          "src": "final",
+          "dest": "sequences",
+          "include": [
+            "*.mp4"
+          ]
+        },
+        {
+          "src": "nora_pipeline_output/nora_openpose_drive.mp4",
+          "dest": "openpose_drive.mp4"
+        }
+      ]
     },
-
     {
-      "id": "pipeline-code",
-      "filename": "nora-pipeline-code-{version}.zip",
+      "id": "pose-positions",
+      "filename": "nora-pose-positions-{version}.zip",
       "items": [
-        { "src": "colab_roi_wilor.py", "dest": "colab_roi_wilor.py" },
-        { "src": "colab_roi_wilor_batch.py", "dest": "colab_roi_wilor_batch.py" },
-        { "src": "colab_wilor.py", "dest": "colab_wilor.py" },
-        { "src": "foot_skeleton.py", "dest": "foot_skeleton.py" },
-        { "src": "gemini_rig.py", "dest": "gemini_rig.py" },
-        { "src": "gemini_repair.py", "dest": "gemini_repair.py" },
-        { "src": "gemini_repair_router.py", "dest": "gemini_repair_router.py" },
-        { "src": "gemini_repair_flagonly.py", "dest": "gemini_repair_flagonly.py" },
-        { "src": "openrouter_rig.py", "dest": "openrouter_rig.py" },
-        { "src": "WiLoR_selfupload.ipynb", "dest": "WiLoR_selfupload.ipynb" },
-        { "src": "rig_extraction/scripts", "dest": "rig_extraction/scripts", "include": ["*.py", "*.sh", "*.md"] },
-        { "src": "rig_extraction", "dest": "rig_extraction/docs", "include": ["*.md", "*.ipynb"], "recursive": false },
-        { "src": "nora_pipeline_output/REPORT.md", "dest": "docs/PIPELINE_REPORT.md" },
-        { "src": "nora_pipeline_output/PROMPT_PACK.md", "dest": "docs/PROMPT_PACK.md" }
+        {
+          "src": "nora_pipeline_output/pose_library.json",
+          "dest": "pose_library.json",
+          "record_filter": "drop_out_of_scope",
+          "filter_reason": "the pipeline used Facebook photo filenames as pose_id, so the IDs are inside this file as content; the hand and costume records are the ones _not_published keeps out of the release"
+        },
+        {
+          "src": "nora_pipeline_output/manifest.csv",
+          "dest": "manifest.csv",
+          "record_filter": "drop_out_of_scope",
+          "filter_reason": "same records as pose_library.json, same IDs in the file and pose_id columns"
+        },
+        {
+          "src": "nora_pipeline_output/manifest.json",
+          "dest": "manifest.json",
+          "record_filter": "drop_out_of_scope",
+          "filter_reason": "same records as manifest.csv"
+        },
+        {
+          "src": "nora_pipeline_output/transitions.json",
+          "dest": "transitions.json"
+        },
+        {
+          "src": "nora_pipeline_output/choreography.json",
+          "dest": "choreography.json"
+        },
+        {
+          "src": "nora_pipeline_output/pose_distance_matrix.csv",
+          "dest": "pose_distance_matrix.csv"
+        },
+        {
+          "src": "nora_pipeline_output/keypoints",
+          "dest": "keypoints",
+          "include": [
+            "*.json"
+          ],
+          "exclude": [
+            "orig_*.json",
+            "cost_*.json",
+            "hand_*.json"
+          ],
+          "exclude_reason": "orig_* filenames are Facebook photo IDs. cost_* and hand_* are the costume and hand-gesture references listed under _not_published: the images were never in the release, so their extracted coordinates must not be either."
+        }
+      ],
+      "catalog_files": [
+        {
+          "src": "poses.json",
+          "dest": "labels.json"
+        }
       ]
     }
   ]

@@ -20,9 +20,12 @@ Usage
 from __future__ import annotations
 
 import argparse
+import csv
 import fnmatch
 import hashlib
+import io
 import json
+import re
 import sys
 import zipfile
 from dataclasses import dataclass, field
@@ -35,11 +38,18 @@ CONFIG_PATH = HERE / "bundles.config.json"
 CATALOG_DIR = PROJECT_ROOT / "data"
 MANIFEST_PATH = CATALOG_DIR / "manifest.json"
 
+# Facebook CDN filenames look like 153409864_2873380766280908_5518422278461896439_n.
+# The pipeline used them as pose_id values, so the identifiers are embedded in
+# the metadata files as *content* — dropping the orig_*.json keypoint files was
+# never enough on its own.
+FACEBOOK_ID_RE = re.compile(r"\d{9,}_\d{9,}")
+
 
 @dataclass
 class PlannedFile:
     source: Path
     arcname: str
+    record_filter: str | None = None
 
 
 @dataclass
@@ -53,6 +63,144 @@ class BundlePlan:
 def load_json(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+# Fields that say *which image a record is*, as opposed to fields that merely
+# mention another record. A Facebook ID in one of these means the record itself
+# is that photo; a Facebook ID anywhere else is a cross-reference to a record
+# that is being dropped, and only that reference needs to go.
+IDENTITY_KEYS = ("pose_id", "file", "source_image", "control_map", "overlay")
+
+# Groups whose source images are listed under `_not_published`: the hand
+# gesture photographs (จีบ / วง / ตั้งวง / ล่อแก้ว) and the costume reference
+# shots. The images were never in the release; their extracted coordinates
+# should not be either.
+OUT_OF_SCOPE_GROUPS = ("hand", "costume")
+
+
+def _is_facebook_record(record) -> bool:
+    if not isinstance(record, dict):
+        return bool(FACEBOOK_ID_RE.search(str(record)))
+    return any(
+        isinstance(record.get(key), str) and FACEBOOK_ID_RE.search(record[key])
+        for key in IDENTITY_KEYS
+    )
+
+
+def _is_out_of_scope_record(record) -> bool:
+    if _is_facebook_record(record):
+        return True
+    group = record.get("group") if isinstance(record, dict) else None
+    return isinstance(group, str) and group.strip().lower() in OUT_OF_SCOPE_GROUPS
+
+
+def _scrub_references(value, dropped_ids: set[str]):
+    """Remove references to dropped records. Returns (value, count).
+
+    `pose_library.json` entries point at their neighbours through fields like
+    `transition_to`, so a record that is itself fine can still name one that
+    was dropped. Those references are removed rather than taken as grounds to
+    drop the record as well.
+    """
+    def is_dangling(text: str) -> bool:
+        return bool(FACEBOOK_ID_RE.search(text)) or text in dropped_ids
+
+    if isinstance(value, str):
+        return (None, 1) if is_dangling(value) else (value, 0)
+
+    if isinstance(value, list):
+        out, removed = [], 0
+        for item in value:
+            if isinstance(item, str) and is_dangling(item):
+                removed += 1
+                continue
+            cleaned, n = _scrub_references(item, dropped_ids)
+            out.append(cleaned)
+            removed += n
+        return out, removed
+
+    if isinstance(value, dict):
+        out, removed = {}, 0
+        for key, item in value.items():
+            cleaned, n = _scrub_references(item, dropped_ids)
+            out[key] = cleaned
+            removed += n
+        return out, removed
+
+    return value, 0
+
+
+def _record_id(record: dict) -> str | None:
+    value = record.get("pose_id")
+    return value if isinstance(value, str) else None
+
+
+def filter_records(path: Path, should_drop) -> tuple[bytes, int]:
+    """Rewrite *path* without the records *should_drop* selects.
+
+    `pose_library.json`, `manifest.json` and `manifest.csv` hold one record per
+    source image. Two things have to come out of them: images sourced from
+    Facebook, which carry the photo ID as their identifier, and the hand and
+    costume references that `_not_published` keeps out of the release. Removing
+    the matching keypoint files does not touch these three, which is why they
+    are rewritten here.
+
+    Returns the rewritten bytes and the number of records dropped. References
+    to dropped records are scrubbed from the survivors and reported separately,
+    since they are edits rather than deletions.
+    """
+    suffix = path.suffix.lower()
+
+    if suffix == ".json":
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(data, list):
+            raise ValueError(
+                f"{path.name}: expected a list of records, got {type(data).__name__}"
+            )
+        kept, dropped_ids = [], set()
+        for record in data:
+            if should_drop(record):
+                identifier = _record_id(record) if isinstance(record, dict) else None
+                if identifier:
+                    dropped_ids.add(identifier)
+            else:
+                kept.append(record)
+
+        scrubbed, references = _scrub_references(kept, dropped_ids)
+        if references:
+            print(f"    scrubbed {path.name}: {references} dangling reference(s)")
+        text = json.dumps(scrubbed, ensure_ascii=False, indent=2) + "\n"
+        return text.encode("utf-8"), len(data) - len(kept)
+
+    if suffix == ".csv":
+        with path.open("r", encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle)
+            fieldnames = reader.fieldnames or []
+            rows = list(reader)
+        kept = [row for row in rows if not should_drop(row)]
+        buffer = io.StringIO(newline="")
+        writer = csv.DictWriter(buffer, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(kept)
+        return buffer.getvalue().encode("utf-8"), len(rows) - len(kept)
+
+    raise ValueError(f"{path.name}: no record filter for {suffix or 'this file type'}")
+
+
+def drop_facebook_ids(path: Path) -> tuple[bytes, int]:
+    """Drop only the records identified by a Facebook photo ID."""
+    return filter_records(path, _is_facebook_record)
+
+
+def drop_out_of_scope(path: Path) -> tuple[bytes, int]:
+    """Drop Facebook-sourced records and the hand and costume references."""
+    return filter_records(path, _is_out_of_scope_record)
+
+
+RECORD_FILTERS = {
+    "drop_facebook_ids": drop_facebook_ids,
+    "drop_out_of_scope": drop_out_of_scope,
+}
 
 
 def matches_any(name: str, patterns: list[str]) -> bool:
@@ -94,23 +242,28 @@ def plan_bundle(
     )
     seen: set[str] = set()
 
-    def add(source: Path, arcname: str) -> None:
+    def add(source: Path, arcname: str, record_filter: str | None = None) -> None:
         if arcname in seen:
             plan.skipped.append(f"duplicate arcname skipped: {arcname}")
             return
         seen.add(arcname)
-        plan.files.append(PlannedFile(source=source, arcname=arcname))
+        plan.files.append(
+            PlannedFile(source=source, arcname=arcname, record_filter=record_filter)
+        )
 
     for item in bundle.get("items", []):
         src = (source_root / item["src"]).resolve()
         dest = item["dest"].strip("/")
+        record_filter = item.get("record_filter")
+        if record_filter and record_filter not in RECORD_FILTERS:
+            raise SystemExit(f"unknown record_filter: {record_filter}")
 
         if not src.exists():
             plan.skipped.append(f"missing source: {item['src']}")
             continue
 
         if src.is_file():
-            add(src, dest)
+            add(src, dest, record_filter)
             continue
 
         include = item.get("include", [])
@@ -119,7 +272,7 @@ def plan_bundle(
         found = 0
         for path in iter_directory(src, include, exclude, global_exclude, recursive):
             relative = path.relative_to(src).as_posix()
-            add(path, f"{dest}/{relative}" if dest else relative)
+            add(path, f"{dest}/{relative}" if dest else relative, record_filter)
             found += 1
         if found == 0:
             plan.skipped.append(f"no files matched in: {item['src']}")
@@ -186,7 +339,12 @@ def write_bundle(plan: BundlePlan, out_dir: Path, manifest: dict) -> Path:
     ) as archive:
         archive.writestr("README.txt", bundle_readme(manifest, plan.bundle_id, plan))
         for entry in plan.files:
-            archive.write(entry.source, arcname=entry.arcname)
+            if entry.record_filter:
+                payload, dropped = RECORD_FILTERS[entry.record_filter](entry.source)
+                archive.writestr(entry.arcname, payload)
+                print(f"    filtered {entry.arcname}: {dropped} record(s) dropped")
+            else:
+                archive.write(entry.source, arcname=entry.arcname)
 
     # Rename only once the archive is complete, so an interrupted build never
     # leaves a truncated file where nginx would happily serve it.

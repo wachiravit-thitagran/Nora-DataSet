@@ -78,18 +78,18 @@ location = /dataset {
 #
 #   # 2. A download without a token is refused.
 #   curl -s -o /dev/null -w '%{http_code}\n' \
-#        https://<host>/dataset/api/download/keypoints
+#        https://<host>/dataset/api/download/pose-images
 #   # -> 403
 #
 #   # 3. A real download returns the whole file.
 #   #    Mint a token with scripts/mint_token.py, then:
 #   curl -s -o /dev/null -w '%{http_code} %{size_download}\n' \
-#        "https://<host>/dataset/api/download/keypoints?t=<token>"
+#        "https://<host>/dataset/api/download/pose-images?t=<token>"
 #   # -> 200 and a size matching `bytes` in manifest.json.
 #
 #   # 4. Resume works.
 #   curl -s -r 0-99 -o /dev/null -w '%{http_code} %{size_download}\n' \
-#        "https://<host>/dataset/api/download/keypoints?t=<token>"
+#        "https://<host>/dataset/api/download/pose-images?t=<token>"
 #   # -> 206 100
 #
 # All four also run automatically in the Jenkins `Smoke tests` stage.
