@@ -6,4 +6,14 @@ dist/
 *.sqlite3
 *.sqlite3-wal
 *.sqlite3-shm
+# Every variant, not just bare .env: the Jenkins deploy writes .env.production
+# into the workspace and a plain ".env" line would not have matched it.
 .env
+.env.*
+
+# local run artefacts
+.local/
+
+# macOS
+.DS_Store
+._*

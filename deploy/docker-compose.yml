@@ -1,13 +1,16 @@
 # Deployment on ainora-agent.
 #
 # Two volumes with deliberately different permissions:
-#   - the bundle directory is mounted READ-ONLY; the app never writes there,
-#     and nginx serves those files directly without going through the app.
+#   - the bundle directory is mounted READ-ONLY; this service reads the files
+#     to serve downloads but must never modify them. nginx never sees them.
 #   - the database directory is the only writable path.
 
 services:
   dataset-web:
-    image: ${IMAGE:-registry.example.com/ainora/dataset-web:latest}
+    # Supplied by the Jenkins deploy stage, pinned to the commit being shipped.
+    # No default on purpose: a manual `docker compose up` without it should say
+    # so rather than quietly resurrect whatever :latest happens to be.
+    image: ${IMAGE:?IMAGE must be set, e.g. $REGISTRY_URL/diis-itoc/nora-dataset:abc1234}
     container_name: ainora-dataset-web
     restart: unless-stopped
 
@@ -29,10 +32,14 @@ services:
       # nginx reserves only /dataset/ and proxies everything to this service,
       # so the application serves the bundle bytes itself.
       USE_XACCEL: "false"
-      TOKEN_TTL_SECONDS: "86400"
-      RETENTION_DAYS: "730"
-      RATE_LIMIT_PER_HOUR: "10"
       TRUST_FORWARDED_FOR: "true"
+
+      # Overridable from the env file, so changing a policy value does not mean
+      # editing this file on the server. RETENTION_DAYS in particular may have
+      # to follow whatever the PDPA notice ends up promising.
+      TOKEN_TTL_SECONDS: "${TOKEN_TTL_SECONDS:-86400}"
+      RETENTION_DAYS: "${RETENTION_DAYS:-730}"
+      RATE_LIMIT_PER_HOUR: "${RATE_LIMIT_PER_HOUR:-10}"
 
     volumes:
       - /srv/ainora/dataset:/data:ro

@@ -1,5 +1,12 @@
 .git
 .gitignore
+
+# The Jenkins credential file lives at the repo root. The Dockerfile copies
+# named directories rather than ".", so it would not be picked up anyway —
+# this is here so that stays true if anyone ever writes COPY . .
+.env
+.env.*
+.local/
 dist/
 __pycache__/
 *.pyc

@@ -1,7 +1,14 @@
-# dataset_web — เว็บเผยแพร่ชุดข้อมูลท่ารำโนรา
+# Nora Dataset — เว็บเผยแพร่ชุดข้อมูลท่ารำโนรา
 
 หน้าเว็บสองภาษาสำหรับเผยแพร่ชุดข้อมูลโนรา พร้อมระบบขอสิทธิ์ดาวน์โหลด
 deploy ด้วย Docker บน `ainora-agent` หลัง nginx ที่มีอยู่เดิม
+
+| | |
+|---|---|
+| repo | `wachiravit-thitagran/Nora-Dataset` (private) |
+| image | `$REGISTRY_URL/diis-itoc/nora-dataset` — build และ push โดย Jenkins ตามแนวเดียวกับ `diis-itoc/psu-policy` |
+| URL | `https://<host>/dataset/` |
+| port | `127.0.0.1:10095` |
 
 ---
 
@@ -26,7 +33,7 @@ nginx มี location เดียวและ proxy ทุกอย่างเ
 ## โครงสร้าง
 
 ```
-dataset_web/
+Nora-Dataset/
 ├── app/
 │   ├── config.py            อ่านค่าทั้งหมดจาก environment
 │   ├── auth.py              โทเคน HMAC (stateless, หมุน SECRET_KEY = เพิกถอนทุกใบ)
@@ -92,7 +99,7 @@ python3 scripts/audit_bundles.py dist/0.1.0-draft
 # 4. ส่งขึ้นเซิร์ฟเวอร์
 rsync -av --progress dist/0.1.0-draft/ ainora-agent:/srv/ainora/dataset/0.1.0-draft/
 
-# 5. commit manifest ที่อัปเดตแล้ว → GitHub Actions build → Jenkins deploy
+# 5. commit manifest ที่อัปเดตแล้ว → merge เข้า main → Jenkins build + deploy
 git add data/manifest.json && git commit -m "release 0.1.0" && git push
 ```
 
@@ -113,7 +120,8 @@ git add data/manifest.json && git commit -m "release 0.1.0" && git push
 mkdir -p /srv/ainora/dataset /srv/ainora/dataset-db /srv/ainora/dataset-web
 cp deploy/docker-compose.yml /srv/ainora/dataset-web/
 
-# ความลับสำหรับเซ็นโทเคน — เก็บใน Jenkins credentials ชื่อ nora-dataset-secret-key
+# ความลับสำหรับเซ็นโทเคน — ใส่เป็นบรรทัด SECRET_KEY=... ในไฟล์ .env
+# แล้วอัปโหลดเป็น Jenkins file credential ชื่อ NORA_DATASET_ENV_PRODUCTION
 openssl rand -hex 32
 ```
 
@@ -159,14 +167,14 @@ nginx ไม่ต้องเห็นไฟล์เลย จึงไม่�
 
 ```bash
 curl -s https://<host>/dataset/api/health                                    # {"status":"ok"}
-curl -s -o /dev/null -w '%{http_code}\n' https://<host>/dataset/api/download/keypoints   # 403
+curl -s -o /dev/null -w '%{http_code}\n' https://<host>/dataset/api/download/pose-images   # 403
 
 TOKEN=$(SECRET_KEY=... python3 scripts/mint_token.py --ttl 300)
 curl -s -o /dev/null -w '%{http_code} %{size_download}\n' \
-  "https://<host>/dataset/api/download/keypoints?t=$TOKEN"                   # ขนาดต้องตรงกับ manifest
+  "https://<host>/dataset/api/download/pose-images?t=$TOKEN"                   # ขนาดต้องตรงกับ manifest
 ```
 
-Jenkins รันให้อัตโนมัติทุกครั้งที่ deploy ใน stage `Smoke tests`
+Jenkins รันให้อัตโนมัติทุกครั้งที่ deploy ใน stage `Deploy to Production`
 
 ### สร้างโทเคนสำหรับทดสอบโดยไม่ผ่านฟอร์ม
 
