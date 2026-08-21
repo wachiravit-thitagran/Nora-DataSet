@@ -1,9 +1,14 @@
 # Nora dataset web service.
 #
-# The image carries only the application and the catalogue files — never the
-# dataset bundles themselves. Bundles live on a volume mounted at DATA_DIR,
-# so a code deploy stays small and fast regardless of how large the dataset
-# grows.
+# The image carries the application, the catalogue files, and the dataset
+# bundles under data/bundles/. One artefact holds code and data together, so a
+# deployed image is reproducible from its tag alone and there is no separate
+# upload step that can leave the two out of step.
+#
+# The cost is size: roughly 77 MB of zips today, re-shipped on every build even
+# when only code changed. If the dataset outgrows that, move the bundles back
+# out to a mounted volume and set DATA_DIR to it — the application reads
+# DATA_DIR either way and needs no change.
 
 FROM python:3.12-slim AS base
 
@@ -18,11 +23,14 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
-COPY data ./data
 COPY scripts ./scripts
 
-# Run unprivileged. The data volume is mounted read-only, so this user needs
-# write access only to the database directory.
+# Last, and on its own layer: the bundles are the largest and most frequently
+# replaced content, so everything above stays cached when only data changes.
+COPY data ./data
+
+# Run unprivileged. The bundles are baked in and only ever read, so this user
+# needs write access only to the database directory.
 RUN useradd --system --uid 10001 --create-home --shell /usr/sbin/nologin nora \
     && chown -R nora:nora /srv/app
 USER nora

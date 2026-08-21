@@ -131,12 +131,12 @@
           }
         }
       ],
-      "filename": null,
-      "bytes": null,
-      "sha256": null,
-      "file_count": null,
-      "updated_at": null,
-      "available": false
+      "filename": "nora-pose-images-0.1.0-draft.zip",
+      "bytes": 41648650,
+      "sha256": "d5e3238efde6e97e89f5d826bea931e2eae2a6e76d8c6b68fef3547358989595",
+      "file_count": 26,
+      "updated_at": "2026-08-21T16:04:38+00:00",
+      "available": true
     },
     {
       "id": "generated-videos",
@@ -145,8 +145,8 @@
         "en": "AI-generated video"
       },
       "description": {
-        "th": "วิดีโอลำดับการรำที่สร้างด้วยปัญญาประดิษฐ์ และวิดีโอคุมท่าแบบโครงกระดูก (OpenPose driving video)",
-        "en": "AI-generated dance sequences and the OpenPose skeleton driving video."
+        "th": "คลิปลำดับท่ารำที่สร้างด้วยปัญญาประดิษฐ์ อัตราส่วน 9:16 พร้อมตราสัญลักษณ์ AINORA และวิดีโอโครงกระดูกจากขั้นตอนการสร้าง",
+        "en": "AI-generated pose-sequence clips in 9:16 with the AINORA logo, plus the skeleton video from the generation pipeline."
       },
       "formats": [
         "mp4"
@@ -156,16 +156,16 @@
           "path": "sequences/",
           "kind": "dir",
           "note": {
-            "th": "วิดีโอ 5 ไฟล์ ชื่อไฟล์คือลำดับท่าในวิดีโอนั้น เช่น “ท่าเขาควาย → ท่าใหม่ → ท่าเขาควาย.mp4”",
-            "en": "Five clips. The filename is the pose sequence itself, e.g. “ท่าเขาควาย → ท่าใหม่ → ท่าเขาควาย.mp4”."
+            "th": "คลิป 20 ไฟล์ 720×1280 (9:16) h264 ยาวคลิปละราว 4 วินาที ชื่อไฟล์คือลำดับท่าในคลิปนั้น เช่น “04 ท่าขุนศรัทธา → ท่าพรหมสี่หน้า.mp4” ชื่อท่าใช้ชุดเดียวกับ labels.json แล้ว ยกเว้นท่าที่อยู่นอกรายชื่อ 12 ท่ามาตรฐาน ซึ่งเขียนว่า ท่าใหม่ (A)–(G) ท่าเทวดา ท่าจีบปรกหน้า และท่าพนมมือ",
+            "en": "20 clips, 720×1280 (9:16) h264, about four seconds each. The filename is the pose sequence, e.g. “04 ท่าขุนศรัทธา → ท่าพรหมสี่หน้า.mp4”. Pose names match labels.json, except for poses outside the canonical twelve, which appear as ท่าใหม่ (A)–(G), ท่าเทวดา, ท่าจีบปรกหน้า and ท่าพนมมือ."
           }
         },
         {
           "path": "openpose_drive.mp4",
           "kind": "file",
           "note": {
-            "th": "วิดีโอโครงกระดูกที่ใช้คุมท่าให้กับวิดีโอใน sequences/ ดูคู่กันเพื่อเทียบว่าโครงกระดูกสั่งท่าอย่างไร",
-            "en": "The skeleton video that drove the clips in sequences/. Watch the two side by side to see what the skeleton was asking for."
+            "th": "วิดีโอโครงกระดูก 576×1024 จากขั้นตอนการสร้าง เป็นสื่อประกอบ ยังไม่ได้ตรวจสอบว่าใช้คุมคลิปไหนใน sequences/ โดยเฉพาะ",
+            "en": "Skeleton video, 576×1024, from the generation pipeline. Related material — it has not been verified as the driver of any particular clip in sequences/."
           }
         },
         {
@@ -177,12 +177,12 @@
           }
         }
       ],
-      "filename": null,
-      "bytes": null,
-      "sha256": null,
-      "file_count": null,
-      "updated_at": null,
-      "available": false
+      "filename": "nora-generated-videos-0.1.0-draft.zip",
+      "bytes": 39337000,
+      "sha256": "52f6cb9f3a2c071bd40a74f66148c6e51ecd1039b589e0ebaea2ed44c8f23b10",
+      "file_count": 21,
+      "updated_at": "2026-08-21T16:04:41+00:00",
+      "available": true
     },
     {
       "id": "pose-positions",

@@ -14,12 +14,15 @@ deploy ด้วย Docker บน `ainora-agent` หลัง nginx ที่ม
 
 ## หลักการออกแบบสองข้อ
 
-**1. โค้ดอยู่ใน Git ข้อมูลอยู่บนดิสก์**
+**1. โค้ดกับข้อมูลอยู่ด้วยกัน หนึ่ง image = หนึ่งชุดข้อมูล**
 
-repo นี้เก็บเฉพาะโค้ดเว็บกับไฟล์แคตตาล็อก (`data/*.json`) รวมไม่กี่ร้อย KB
-ตัวไฟล์ dataset จริงอยู่บน volume ของเซิร์ฟเวอร์ที่ `/srv/ainora/dataset/<version>/`
-Docker image จึงเล็กและ deploy ได้บ่อยโดยไม่ต้องขน GB ผ่าน CI ทุกรอบ
-และการอัปเดตข้อมูลก็ไม่ต้อง rebuild image
+ไฟล์ zip อยู่ใน repo ที่ `data/bundles/<version>/` และถูก `COPY` เข้า image
+image tag เดียวจึงบอกได้ครบว่าโค้ดเวอร์ชันไหนคู่กับข้อมูลชุดไหน ไม่มีขั้นตอนอัปโหลดแยก
+ที่จะทำให้สองอย่างหลุดจากกัน และย้อนกลับเวอร์ชันเดิมได้ด้วยการ deploy tag เก่า
+
+ราคาที่จ่ายคือขนาด — ราว 79 MB ต่อเวอร์ชัน เก็บถาวรใน git history และถูกส่งซ้ำทุกครั้งที่ build
+แม้แก้แค่โค้ด ถ้าข้อมูลโตกว่านี้มากให้ย้าย `data/bundles/` ออกไปเป็น volume แล้วชี้ `DATA_DIR`
+ไปที่นั่น — ตัวแอปอ่านจาก `DATA_DIR` เหมือนเดิม ไม่ต้องแก้โค้ด
 
 **2. nginx จองแค่ `/dataset/` ที่เหลือเป็นเรื่องของแอป**
 
@@ -42,7 +45,8 @@ Nora-Dataset/
 │   └── static/              หน้าเว็บ (ไม่มี build step, ไม่มี framework)
 ├── data/
 │   ├── manifest.json        แคตตาล็อก — ขับเคลื่อนทั้งหน้าเว็บ
-│   └── poses.json           ชื่อท่ามาตรฐาน 12 ท่า + aliases + สถานะภาพ
+│   ├── poses.json           ชื่อท่ามาตรฐาน 12 ท่า + aliases + สถานะภาพ
+│   └── bundles/<version>/   ไฟล์ zip ที่แพ็กแล้ว — commit เข้า repo และ COPY เข้า image
 ├── scripts/
 │   ├── bundles.config.json  whitelist ว่าไฟล์ไหนเข้า bundle ไหน
 │   ├── build_bundles.py     แพ็ก zip + sha256 + อัปเดต manifest
@@ -90,17 +94,18 @@ python3 scripts/validate_catalog.py
 # 1. ดูก่อนว่าจะมีอะไรเข้า bundle บ้าง (ไม่เขียนไฟล์)
 python3 scripts/build_bundles.py --dry-run
 
-# 2. แพ็กจริง — เขียนลง dist/<version>/ แล้วอัปเดต data/manifest.json ให้เอง
+# 2. แพ็กจริง — เขียนลง data/bundles/<version>/ แล้วอัปเดต data/manifest.json ให้เอง
+#    ชุดที่ตั้ง publish:false ใน bundles.config.json จะถูกข้าม
 python3 scripts/build_bundles.py
 
 # 3. ตรวจซ้ำว่าไม่มีไฟล์ต้องห้ามหลุดเข้าไป — ห้ามข้ามขั้นนี้
-python3 scripts/audit_bundles.py dist/0.1.0-draft
+#    สำคัญกว่าเดิมมาก เพราะ commit แล้วลบออกจาก history ไม่ได้
+python3 scripts/audit_bundles.py data/bundles/0.1.0-draft
 
-# 4. ส่งขึ้นเซิร์ฟเวอร์
-rsync -av --progress dist/0.1.0-draft/ ainora-agent:/srv/ainora/dataset/0.1.0-draft/
-
-# 5. commit manifest ที่อัปเดตแล้ว → merge เข้า main → Jenkins build + deploy
-git add data/manifest.json && git commit -m "release 0.1.0" && git push
+# 4. commit ทั้ง zip และ manifest → merge เข้า main → Jenkins build + deploy
+#    ไม่มี rsync แล้ว: ไฟล์เข้า image ไปพร้อมโค้ด
+git add data/bundles data/manifest.json
+git commit -m "release 0.1.0" && git push
 ```
 
 `build_bundles.py` ใช้ **whitelist** เท่านั้น ไฟล์จะเข้า bundle ก็ต่อเมื่อ
@@ -117,7 +122,8 @@ git add data/manifest.json && git commit -m "release 0.1.0" && git push
 
 ```bash
 # โครงไดเรกทอรี
-mkdir -p /srv/ainora/dataset /srv/ainora/dataset-db /srv/ainora/dataset-web
+# ไม่ต้องมีโฟลเดอร์ dataset แล้ว — ไฟล์อยู่ใน image
+mkdir -p /srv/ainora/dataset-db /srv/ainora/dataset-web
 cp deploy/docker-compose.yml /srv/ainora/dataset-web/
 
 # ความลับสำหรับเซ็นโทเคน — ใส่เป็นบรรทัด SECRET_KEY=... ในไฟล์ .env
@@ -152,8 +158,7 @@ location /dataset/ {
 }
 ```
 
-ไฟล์ dataset mount เข้า **container เท่านั้น** (`/srv/ainora/dataset:/data:ro`)
-nginx ไม่ต้องเห็นไฟล์เลย จึงไม่ต้องแชร์ volume กัน
+ไฟล์ dataset อยู่**ใน image** nginx ไม่ต้องเห็นไฟล์เลย จึงไม่ต้องแชร์ volume กัน
 
 ### จุดที่พลาดแล้วเจ็บ
 
@@ -193,7 +198,7 @@ SECRET_KEY=... python3 scripts/mint_token.py --ttl 300
 | ตัวแปร | ค่าเริ่มต้น | หมายเหตุ |
 |---|---|---|
 | `SECRET_KEY` | — | **บังคับ** อย่างน้อย 32 ตัวอักษร เปลี่ยนค่า = เพิกถอนโทเคนทุกใบทันที |
-| `DATA_DIR` | `/data` | ที่อยู่ของ bundle (mount แบบ read-only) |
+| `DATA_DIR` | `/data` | ที่อยู่ของ bundle — production ตั้งเป็น `/srv/app/data/bundles` (อยู่ใน image) |
 | `CATALOG_DIR` | `./data` | ที่อยู่ของ manifest.json / poses.json |
 | `DB_PATH` | `$DATA_DIR/db/access.sqlite3` | ต้องเขียนได้ |
 | `ROOT_PATH` | ว่าง | ตั้งเป็น `/dataset` เมื่ออยู่หลัง nginx |

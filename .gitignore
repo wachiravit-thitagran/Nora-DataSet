@@ -17,3 +17,7 @@ dist/
 # macOS
 .DS_Store
 ._*
+
+# Staging area for files the Cowork bridge could not unlink. Local rubbish,
+# never part of the project.
+_to_delete/

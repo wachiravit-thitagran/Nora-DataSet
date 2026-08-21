@@ -1,9 +1,9 @@
 # Deployment on ainora-agent.
 #
-# Two volumes with deliberately different permissions:
-#   - the bundle directory is mounted READ-ONLY; this service reads the files
-#     to serve downloads but must never modify them. nginx never sees them.
-#   - the database directory is the only writable path.
+# The dataset bundles ship inside the image (see the Dockerfile), so the only
+# volume left is the database directory — the one path this service writes to.
+# Nothing has to be copied to the server separately: deploying an image tag
+# deploys its data.
 
 services:
   dataset-web:
@@ -25,7 +25,9 @@ services:
       # download token.
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
 
-      DATA_DIR: /data
+      # Inside the image, not a mount. Bundles resolve to
+      # DATA_DIR/<version>/<filename>.
+      DATA_DIR: /srv/app/data/bundles
       DB_PATH: /var/lib/nora/access.sqlite3
       ROOT_PATH: /dataset
 
@@ -42,7 +44,6 @@ services:
       RATE_LIMIT_PER_HOUR: "${RATE_LIMIT_PER_HOUR:-10}"
 
     volumes:
-      - /srv/ainora/dataset:/data:ro
       - /srv/ainora/dataset-db:/var/lib/nora
 
     logging:

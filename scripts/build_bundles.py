@@ -407,6 +407,16 @@ def main() -> int:
         if wanted and bundle["id"] not in wanted:
             continue
 
+        # A bundle held back on purpose stays held back through a plain
+        # `build_bundles.py`. Packaging it is what makes it downloadable, so
+        # the decision not to publish has to live here rather than in a note
+        # someone has to remember. Name it with --only to build it anyway.
+        if bundle.get("publish") is False and not wanted:
+            print(f"\n=== {bundle['id']} ===")
+            print(f"    held back: {bundle.get('hold_reason', 'publish is false')}")
+            print("    (build it anyway with --only " + bundle["id"] + ")")
+            continue
+
         plan = plan_bundle(bundle, source_root, global_exclude, version)
 
         print(f"\n=== {plan.bundle_id} ===")

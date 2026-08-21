@@ -6,7 +6,7 @@
     "A blacklist would eventually miss one of them; a whitelist cannot."
   ],
   "source_root": "~/Documents/Nora",
-  "output_root": "./dist",
+  "output_root": "./data/bundles",
   "version": "0.1.0-draft",
   "_not_published": {
     "_comment": "Deliberately outside the release. Recorded here so the reasoning is not lost, and so nobody re-adds them without reading why.",
@@ -17,7 +17,8 @@
     "tiktok_sourced_video": "snaptik_*.mp4 and roi_wilor_overlay*.mp4 — third-party content, must not be redistributed",
     "facebook_derived_keypoints": "nora_pipeline_output/keypoints/orig_*.json and cost_470191295_*.json — filenames are Facebook photo IDs. The same IDs are embedded as pose_id values inside pose_library.json, manifest.json and manifest.csv, so those three are rewritten at packaging time by the drop_out_of_scope record filter rather than copied.",
     "keypoints_of_unpublished_images": "nora_pipeline_output/keypoints/hand_*.json and cost_*.json — coordinates extracted from the hand-gesture and costume images above. The images are outside the release, so their coordinates are too.",
-    "procurement": "TOR*.docx, .bak_TOR*, dreamina-invoice/, หลักฐานราคากลาง/ — internal documents"
+    "procurement": "TOR*.docx, .bak_TOR*, dreamina-invoice/, หลักฐานราคากลาง/ — internal documents",
+    "exhibition_assets": "web_ainora_video_output_9x16_logo_v2/AINORA-video-wall-4K.mp4 and video-wall.html — the exhibition video wall and its web page. Presentation material built from the clips, not dataset content. Say so and they can be added."
   },
   "global_exclude": [
     ".DS_Store",
@@ -60,15 +61,21 @@
       "filename": "nora-generated-videos-{version}.zip",
       "items": [
         {
-          "src": "final",
+          "src": "web_ainora_video_output_9x16_logo_v2",
           "dest": "sequences",
           "include": [
             "*.mp4"
-          ]
+          ],
+          "exclude": [
+            "AINORA-video-wall-4K.mp4"
+          ],
+          "exclude_reason": "the video wall is a montage built for exhibition display, not one of the pose sequences",
+          "note": "9:16 (720x1280) h264 with the AINORA logo. Filenames carry the pose sequence using the canonical names."
         },
         {
           "src": "nora_pipeline_output/nora_openpose_drive.mp4",
-          "dest": "openpose_drive.mp4"
+          "dest": "openpose_drive.mp4",
+          "note": "skeleton video from the generation pipeline, 576x1024. Related material, not verified as the driver of any specific clip in sequences/."
         }
       ]
     },
@@ -125,7 +132,9 @@
           "src": "poses.json",
           "dest": "labels.json"
         }
-      ]
+      ],
+      "publish": false,
+      "hold_reason": "no keypoints exist for the twelve canonical dance poses — pose detection returns nothing on the scanned line drawings. The coordinates that do exist belong to the hand and costume references, which are outside the release. Set publish to true once the twelve poses have been extracted."
     }
   ]
 }
