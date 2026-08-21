@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ชุดข้อมูลท่ารำโนรา · Nora Dance Dataset</title>
 <meta name="description" content="ชุดข้อมูลท่ารำโนราสำหรับงานวิจัยด้านปัญญาประดิษฐ์ · A dataset of Nora dance for AI research.">
+<!-- Same faces as ainora.psu.ac.th, so the two sites read as one product. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&family=Sarabun:wght@400;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,7 +24,7 @@
       <a href="#about" data-i18n="nav_about">เกี่ยวกับชุดข้อมูล</a>
       <a href="#poses" data-i18n="nav_poses">ท่ารำ</a>
       <a href="#download" data-i18n="nav_download">ดาวน์โหลด</a>
-      <a href="#usage" data-i18n="nav_usage">วิธีใช้</a>
+      <a href="#usage" data-i18n="nav_usage">ไฟล์ในชุดข้อมูล</a>
       <a href="#terms" data-i18n="nav_terms">เงื่อนไขและการอ้างอิง</a>
     </nav>
     <button type="button" id="lang-toggle" class="lang-toggle" data-i18n="switch_to">English</button>
@@ -131,7 +135,10 @@
         </div>
 
         <div class="field">
-          <label for="f-detail" data-i18n="form_detail">รายละเอียดเพิ่มเติม</label>
+          <label for="f-detail">
+            <span data-i18n="form_detail">รายละเอียดเพิ่มเติม</span>
+            <span class="optional" data-i18n="form_detail_optional">ถ้ามี</span>
+          </label>
           <textarea id="f-detail" name="purpose_detail" rows="3" maxlength="1000"></textarea>
         </div>
 
@@ -153,15 +160,9 @@
   </section>
 
   <section id="usage" class="wrap section">
-    <h2 data-i18n="usage_heading">วิธีใช้ข้อมูล</h2>
+    <h2 data-i18n="usage_heading">ในไฟล์มีอะไรบ้าง</h2>
     <p class="prose" data-i18n="usage_intro"></p>
-    <pre class="code"><code>import json
-
-with open("pose_library.json", encoding="utf-8") as f:
-    library = json.load(f)
-
-for entry in library["poses"]:
-    print(entry["id"], entry["name_th"], len(entry["keypoints"]))</code></pre>
+    <div id="contents-list"></div>
   </section>
 
   <section id="terms" class="wrap section">

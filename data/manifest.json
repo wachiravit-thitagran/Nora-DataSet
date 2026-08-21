@@ -10,8 +10,8 @@
       "en": "Nora Dance Dataset"
     },
     "summary": {
-      "th": "ชุดข้อมูลท่ารำโนราสำหรับงานวิจัยด้านปัญญาประดิษฐ์ ประกอบด้วยจุดสำคัญของร่างกาย (keypoints) ภาพท่ารำอ้างอิง ภาพท่าครู 12 ท่า วิดีโอที่สร้างด้วย AI และโค้ดของกระบวนการประมวลผล",
-      "en": "A dataset of Nora (southern Thai) dance for AI research: body keypoints, reference pose images, the twelve canonical teacher poses, AI-generated video, and the processing pipeline code."
+      "th": "ชุดข้อมูลท่ารำโนราสำหรับงานวิจัยด้านปัญญาประดิษฐ์ ประกอบด้วยภาพท่ารำ 12 ท่าพร้อมชื่อท่า วิดีโอที่สร้างด้วย AI และตำแหน่งท่า (pose position) ที่สกัดด้วยคอมพิวเตอร์วิทัศน์",
+      "en": "A dataset of Nora (southern Thai) dance for AI research: the twelve canonical pose images with labels, AI-generated video, and computer-vision-extracted pose positions."
     },
     "description": {
       "th": "โนราเป็นนาฏศิลป์พื้นบ้านภาคใต้ของประเทศไทย ได้รับการขึ้นทะเบียนเป็นมรดกภูมิปัญญาทางวัฒนธรรมที่จับต้องไม่ได้ของมนุษยชาติโดยยูเนสโกในปี พ.ศ. 2564 ชุดข้อมูลนี้จัดทำขึ้นเพื่อสนับสนุนการศึกษาและการสืบทอดท่ารำด้วยเทคโนโลยีปัญญาประดิษฐ์ โดยรวบรวมท่ารำมาตรฐาน 12 ท่า พร้อมข้อมูลโครงร่างที่สกัดด้วยคอมพิวเตอร์วิทัศน์",
@@ -68,65 +68,73 @@
   },
   "bundles": [
     {
-      "id": "keypoints",
+      "id": "pose-images",
       "title": {
-        "th": "จุดสำคัญของร่างกายและคลังท่า",
-        "en": "Keypoints & pose library"
+        "th": "ภาพท่ารำ 12 ท่า พร้อมชื่อท่า",
+        "en": "Twelve pose images with labels"
       },
       "description": {
-        "th": "pose_library.json (63 รายการ), keypoints รายท่า, เมทริกซ์ระยะห่างระหว่างท่า, กราฟการเปลี่ยนท่า และ manifest ของภาพทั้งหมด",
-        "en": "pose_library.json (63 entries), per-pose keypoints, inter-pose distance matrix, transition graph, and the image manifest."
+        "th": "ภาพท่ารำมาตรฐาน 12 ท่า คู่กันระหว่างภาพสแกนต้นฉบับจากหนังสือกับภาพที่ซ่อมแซมด้วย AI พร้อมไฟล์ label ที่ระบุชื่อท่า คำอธิบายลักษณะท่า ชื่ออื่นที่เคยใช้เรียก และสถานะการตรวจอัตลักษณ์รายภาพ",
+        "en": "The twelve canonical poses, each pairing the scanned book original with its AI-restored counterpart, plus a label file giving pose names, descriptions, alternative names, and per-image identity-verification status."
       },
-      "filename": null,
-      "bytes": null,
-      "sha256": null,
-      "file_count": null,
-      "formats": [
-        "json",
-        "csv"
-      ],
-      "updated_at": null,
-      "available": false
-    },
-    {
-      "id": "teacher-poses",
-      "title": {
-        "th": "ท่าครู 12 ท่า (ต้นฉบับ + ซ่อมแซม)",
-        "en": "Twelve teacher poses (original + restored)"
-      },
-      "description": {
-        "th": "ภาพสแกนต้นฉบับจากหนังสือคู่กับภาพที่ซ่อมแซมด้วย AI พร้อมไฟล์ label ชื่อท่า คำอธิบาย และสถานะการตรวจอัตลักษณ์",
-        "en": "Scanned book originals paired with AI-restored versions, plus a label file giving pose names, descriptions, and identity-verification status."
-      },
-      "filename": null,
-      "bytes": null,
-      "sha256": null,
-      "file_count": null,
       "formats": [
         "png",
         "json"
       ],
-      "updated_at": null,
-      "available": false
-    },
-    {
-      "id": "reference-images",
-      "title": {
-        "th": "ภาพท่ารำและเครื่องแต่งกายอ้างอิง",
-        "en": "Reference pose & costume images"
-      },
-      "description": {
-        "th": "ภาพท่ามือพื้นฐาน ภาพท่ารำเต็มตัว ภาพเครื่องแต่งกาย และภาพ overlay โครงกระดูก",
-        "en": "Basic hand gestures, full-body poses, costume references, and skeleton overlay images."
-      },
+      "contents": [
+        {
+          "path": "images/",
+          "kind": "dir",
+          "note": {
+            "th": "ภาพ 24 ไฟล์ จัดเป็นคู่ ต้นฉบับ–ซ่อมแซม ชื่อไฟล์ขึ้นต้นด้วยเลขคู่สองหลัก",
+            "en": "24 files, arranged in original–restored pairs. Each filename begins with a two-digit pair number."
+          }
+        },
+        {
+          "path": "NN_ชื่อท่า_A-ต้นฉบับ.png",
+          "kind": "example",
+          "note": {
+            "th": "ภาพสแกนจากหนังสือ",
+            "en": "Scan of the printed original."
+          }
+        },
+        {
+          "path": "NN_ชื่อท่า_B-ซ่อมแซม.png",
+          "kind": "example",
+          "note": {
+            "th": "ภาพที่สร้างใหม่ด้วย AI จากภาพสแกนคู่กัน ไม่ใช่การกู้คืนภาพถ่ายเดิม คู่ที่ 03 มีสองไฟล์ (ขวา/ซ้าย) และคู่ที่ 13 ยังไม่มีไฟล์นี้",
+            "en": "AI-generated reconstruction of the scan beside it, not a recovery of the original photograph. Pair 03 has two of these (right/left); pair 13 has none yet."
+          }
+        },
+        {
+          "path": "labels.json",
+          "kind": "file",
+          "note": {
+            "th": "ชื่อท่ามาตรฐาน 12 ท่า คำอธิบายลักษณะท่า ชื่ออื่นที่เคยใช้ และสถานะการตรวจอัตลักษณ์รายภาพ — ชื่อในชื่อไฟล์ภาพเป็นชื่อเดิมที่ยังไม่ได้ปรับ ให้ยึด labels.json เป็นหลัก และจับคู่กันด้วยเลขคู่ในฟิลด์ pair_index",
+            "en": "The twelve canonical pose names, descriptions, alternative names, and per-image identity status. The image filenames still carry older names; treat labels.json as authoritative and join on the pair number in pair_index."
+          }
+        },
+        {
+          "path": "PAIRING-NOTES.md",
+          "kind": "file",
+          "note": {
+            "th": "บันทึกว่าภาพต้นฉบับแต่ละภาพถูกจับคู่กับภาพซ่อมแซมใดและด้วยเหตุผลใด",
+            "en": "How each original was matched to its restored counterpart, and on what evidence."
+          }
+        },
+        {
+          "path": "README.txt",
+          "kind": "file",
+          "note": {
+            "th": "สัญญาอนุญาต ข้อควรทราบ และรูปแบบการอ้างอิง สร้างขึ้นอัตโนมัติตอนแพ็กไฟล์",
+            "en": "Licence, the notice above, and the citation format. Generated at packaging time."
+          }
+        }
+      ],
       "filename": null,
       "bytes": null,
       "sha256": null,
       "file_count": null,
-      "formats": [
-        "jpg",
-        "png"
-      ],
       "updated_at": null,
       "available": false
     },
@@ -140,37 +148,140 @@
         "th": "วิดีโอลำดับการรำที่สร้างด้วยปัญญาประดิษฐ์ และวิดีโอคุมท่าแบบโครงกระดูก (OpenPose driving video)",
         "en": "AI-generated dance sequences and the OpenPose skeleton driving video."
       },
+      "formats": [
+        "mp4"
+      ],
+      "contents": [
+        {
+          "path": "sequences/",
+          "kind": "dir",
+          "note": {
+            "th": "วิดีโอ 5 ไฟล์ ชื่อไฟล์คือลำดับท่าในวิดีโอนั้น เช่น “ท่าเขาควาย → ท่าใหม่ → ท่าเขาควาย.mp4”",
+            "en": "Five clips. The filename is the pose sequence itself, e.g. “ท่าเขาควาย → ท่าใหม่ → ท่าเขาควาย.mp4”."
+          }
+        },
+        {
+          "path": "openpose_drive.mp4",
+          "kind": "file",
+          "note": {
+            "th": "วิดีโอโครงกระดูกที่ใช้คุมท่าให้กับวิดีโอใน sequences/ ดูคู่กันเพื่อเทียบว่าโครงกระดูกสั่งท่าอย่างไร",
+            "en": "The skeleton video that drove the clips in sequences/. Watch the two side by side to see what the skeleton was asking for."
+          }
+        },
+        {
+          "path": "README.txt",
+          "kind": "file",
+          "note": {
+            "th": "สัญญาอนุญาต ข้อควรทราบ และรูปแบบการอ้างอิง",
+            "en": "Licence, notice, and citation format."
+          }
+        }
+      ],
       "filename": null,
       "bytes": null,
       "sha256": null,
       "file_count": null,
-      "formats": [
-        "mp4"
-      ],
       "updated_at": null,
       "available": false
     },
     {
-      "id": "pipeline-code",
+      "id": "pose-positions",
       "title": {
-        "th": "โค้ดกระบวนการประมวลผล",
-        "en": "Processing pipeline code"
+        "th": "ตำแหน่งท่า (Pose Position)",
+        "en": "Pose positions"
       },
       "description": {
-        "th": "สคริปต์สกัด keypoints, การซ่อมแซมด้วย VLM, การสร้าง control map และเอกสารประกอบ",
-        "en": "Keypoint extraction scripts, VLM-based repair, control-map generation, and accompanying documentation."
+        "th": "พิกัดจุดสำคัญของร่างกายที่สกัดด้วยคอมพิวเตอร์วิทัศน์ คลังท่า (pose library) เมทริกซ์ระยะห่างระหว่างท่า และกราฟการเปลี่ยนท่า",
+        "en": "Computer-vision-extracted body keypoint coordinates, the pose library, the inter-pose distance matrix, and the transition graph."
       },
+      "formats": [
+        "json",
+        "csv"
+      ],
+      "contents": [
+        {
+          "path": "pose_library.json",
+          "kind": "file",
+          "note": {
+            "th": "ไฟล์หลัก หนึ่งระเบียนต่อหนึ่งภาพ แต่ละระเบียนมี pose_id ชื่อท่า กลุ่ม ขนาดภาพ พิกัดร่างกาย 18 จุดแบบ OpenPose ที่ normalize แล้ว (body_keypoints_op18_norm) พิกัดมือ (hand_keypoints_norm) และท่าที่เชื่อมต่อได้ (transition_to)",
+            "en": "The main file: one record per image, each with a pose_id, names, group, image size, the normalised 18-point OpenPose body coordinates (body_keypoints_op18_norm), hand coordinates (hand_keypoints_norm), and the poses it can transition to."
+          }
+        },
+        {
+          "path": "manifest.csv",
+          "kind": "file",
+          "note": {
+            "th": "ดัชนีของระเบียนชุดเดียวกันในรูปตาราง เปิดด้วย Excel หรือ pandas ได้ทันที — คอลัมน์: file, group, pose_id, name_th, name_en, w, h, has_body, n_hands",
+            "en": "The same records as a flat table, openable in Excel or pandas — columns: file, group, pose_id, name_th, name_en, w, h, has_body, n_hands."
+          }
+        },
+        {
+          "path": "manifest.json",
+          "kind": "file",
+          "note": {
+            "th": "ดัชนีเดียวกับ manifest.csv ในรูปแบบ JSON",
+            "en": "The same index as manifest.csv, in JSON."
+          }
+        },
+        {
+          "path": "keypoints/",
+          "kind": "dir",
+          "note": {
+            "th": "จุดพิกัดดิบรายภาพ ชื่อไฟล์คือ pose_id ใช้เมื่อต้องการค่าก่อน normalize",
+            "en": "Raw per-image coordinates, named by pose_id. Use these when you need the values before normalisation."
+          }
+        },
+        {
+          "path": "transitions.json",
+          "kind": "file",
+          "note": {
+            "th": "กราฟความใกล้เคียงระหว่างท่า ระบุท่าที่ใกล้ที่สุดสามอันดับพร้อมระยะห่าง และเส้นทางที่ร้อยทุกท่าเข้าด้วยกันแบบ greedy",
+            "en": "A nearest-neighbour graph: the three closest poses for each and their distances, plus a greedy path threading them all together."
+          }
+        },
+        {
+          "path": "pose_distance_matrix.csv",
+          "kind": "file",
+          "note": {
+            "th": "เมทริกซ์ระยะห่างที่ transitions.json คำนวณมาจาก ค่าน้อยแปลว่าท่าคล้ายกัน",
+            "en": "The distance matrix transitions.json is derived from. Smaller means more alike."
+          }
+        },
+        {
+          "path": "choreography.json",
+          "kind": "file",
+          "note": {
+            "th": "ตัวอย่างลำดับการรำหนึ่งชุดที่ประกอบขึ้นจากกราฟข้างต้น พร้อมค่า fps จำนวนเฟรม ระยะค้างท่า และขนาดผืนภาพ",
+            "en": "One worked dance sequence assembled from that graph, with fps, frame count, hold length, and canvas size."
+          }
+        },
+        {
+          "path": "labels.json",
+          "kind": "file",
+          "note": {
+            "th": "ไฟล์เดียวกับในชุดภาพท่ารำ ใช้เชื่อม pose_id เข้ากับชื่อท่ามาตรฐาน 12 ท่า",
+            "en": "The same file as in the image bundle. Use it to map a pose_id onto one of the twelve canonical names."
+          }
+        },
+        {
+          "path": "README.txt",
+          "kind": "file",
+          "note": {
+            "th": "สัญญาอนุญาต ข้อควรทราบ และรูปแบบการอ้างอิง",
+            "en": "Licence, notice, and citation format."
+          }
+        }
+      ],
       "filename": null,
       "bytes": null,
       "sha256": null,
       "file_count": null,
-      "formats": [
-        "py",
-        "ipynb",
-        "md"
-      ],
       "updated_at": null,
-      "available": false
+      "available": false,
+      "pending_note": {
+        "th": "ชุดนี้ยังไม่เปิดให้ดาวน์โหลด การตรวจจับท่าไม่ทำงานกับภาพลายเส้นที่สแกนจากหนังสือ ทำให้ท่ารำ 12 ท่ามาตรฐานยังไม่มีพิกัด พิกัดที่สกัดได้ในตอนนี้เป็นของภาพชุดอื่นซึ่งอยู่นอกขอบเขตการเผยแพร่ จะเปิดชุดนี้เมื่อสกัดพิกัดของท่ารำ 12 ท่าได้ครบ",
+        "en": "This bundle is not open for download yet. Pose detection returns nothing on the scanned line drawings, so the twelve canonical dance poses have no coordinates. The coordinates that do exist belong to other images that are outside the scope of this release. The bundle opens once the twelve poses have been extracted."
+      }
     }
   ],
   "poses_file": "poses.json"

@@ -242,6 +242,13 @@
         card.appendChild(sum);
       }
 
+      /* A bundle held back on purpose says why. Without this the card is
+         indistinguishable from one whose upload simply failed. */
+      var pending = pick(bundle.pending_note);
+      if (pending && !bundle.available) {
+        card.appendChild(el("p", "pending-note", pending));
+      }
+
       var button = el("button", bundle.available ? "btn btn-primary" : "btn");
       button.type = "button";
       if (!bundle.available) {
@@ -262,6 +269,49 @@
       card.appendChild(button);
 
       grid.appendChild(card);
+    });
+  }
+
+  /* The zip layout, described bundle by bundle. Like everything else on this
+     page it comes from the manifest, so repackaging a bundle differently is a
+     data edit rather than a code edit. */
+  function renderContents() {
+    var host = $("#contents-list");
+    if (!host) return;
+    host.textContent = "";
+
+    (state.manifest.bundles || []).forEach(function (bundle) {
+      var entries = bundle.contents || [];
+      if (!entries.length) return;
+
+      var block = el("section", "contents");
+      block.appendChild(el("h3", null, pick(bundle.title)));
+
+      // The archive name is what people actually see in their downloads
+      // folder, so lead with it when we know it.
+      if (bundle.filename) {
+        block.appendChild(el("p", "contents-file", bundle.filename));
+      } else {
+        block.appendChild(el("p", "contents-file muted", t("contents_unavailable")));
+      }
+
+      var pendingNote = pick(bundle.pending_note);
+      if (pendingNote && !bundle.available) {
+        block.appendChild(el("p", "pending-note", pendingNote));
+      }
+
+      var list = el("ul", "tree");
+      entries.forEach(function (entry) {
+        var kind = entry.kind || "file";
+        var li = el("li", "tree-item is-" + kind);
+        li.appendChild(el("code", null, entry.path));
+        var note = pick(entry.note);
+        if (note) li.appendChild(el("span", "tree-note", note));
+        list.appendChild(li);
+      });
+      block.appendChild(list);
+
+      host.appendChild(block);
     });
   }
 
@@ -288,6 +338,7 @@
     renderPoses();
     renderGrantBanner();
     renderBundles();
+    renderContents();
   }
 
   // ---------------------------------------------------------------- download

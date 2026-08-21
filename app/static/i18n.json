@@ -6,18 +6,15 @@
     "nav_about": "เกี่ยวกับชุดข้อมูล",
     "nav_poses": "ท่ารำ",
     "nav_download": "ดาวน์โหลด",
-    "nav_usage": "วิธีใช้",
+    "nav_usage": "ไฟล์ในชุดข้อมูล",
     "nav_terms": "เงื่อนไขและการอ้างอิง",
-
     "status_draft": "ฉบับร่าง — ยังไม่เผยแพร่สู่สาธารณะ",
     "status_published": "เผยแพร่แล้ว",
     "version_label": "เวอร์ชัน",
     "updated_label": "ปรับปรุงล่าสุด",
     "license_label": "สัญญาอนุญาต",
-
     "about_heading": "เกี่ยวกับชุดข้อมูล",
     "disclaimer_heading": "ข้อควรทราบก่อนใช้ข้อมูล",
-
     "poses_heading": "ท่ารำมาตรฐาน 12 ท่า",
     "poses_intro": "ชื่อท่ายึดตามรายชื่อท่ามาตรฐานของโครงการ ชื่ออื่นที่เคยใช้เรียกท่าเดียวกันบันทึกไว้ในช่อง “ชื่ออื่น”",
     "poses_col_id": "รหัส",
@@ -31,7 +28,6 @@
     "identity_not_applicable": "ตรวจไม่ได้",
     "no_restored": "ยังไม่มีภาพซ่อมแซม",
     "unmapped_heading": "รายการที่รอการตรวจสอบ",
-
     "download_heading": "ดาวน์โหลดชุดข้อมูล",
     "download_intro": "กรอกข้อมูลสั้น ๆ ครั้งเดียว แล้วดาวน์โหลดได้ทุกชุดภายใน 24 ชั่วโมง",
     "bundle_files": "ไฟล์",
@@ -43,7 +39,6 @@
     "checksum_hint": "ตรวจสอบไฟล์หลังดาวน์โหลดด้วยคำสั่ง",
     "copy": "คัดลอก",
     "copied": "คัดลอกแล้ว",
-
     "form_heading": "ขอสิทธิ์ดาวน์โหลด",
     "form_email": "อีเมล",
     "form_email_hint": "ใช้ติดต่อกลับเรื่องการปรับปรุงชุดข้อมูลเท่านั้น",
@@ -59,6 +54,7 @@
     "purpose_commercial": "การใช้เชิงพาณิชย์",
     "purpose_other": "อื่น ๆ",
     "form_detail": "รายละเอียดเพิ่มเติม",
+    "form_detail_optional": "ถ้ามี",
     "form_detail_required": "กรุณาระบุวัตถุประสงค์",
     "form_consent": "ข้าพเจ้าได้อ่านและยินยอมให้เก็บรวบรวมและใช้ข้อมูลส่วนบุคคลตามประกาศความเป็นส่วนตัว และยอมรับเงื่อนไขการนำข้อมูลไปใช้",
     "form_privacy_link": "อ่านประกาศความเป็นส่วนตัว",
@@ -71,16 +67,14 @@
     "access_granted": "เปิดสิทธิ์ดาวน์โหลดแล้ว",
     "access_granted_detail": "สิทธิ์นี้ใช้ได้ถึง {time} หลังจากนั้นต้องกรอกฟอร์มใหม่",
     "access_expired": "สิทธิ์ดาวน์โหลดหมดอายุแล้ว กรุณากรอกฟอร์มอีกครั้ง",
-
-    "usage_heading": "วิธีใช้ข้อมูล",
-    "usage_intro": "ตัวอย่างการเปิดไฟล์คลังท่าด้วย Python",
-
+    "usage_heading": "ในไฟล์มีอะไรบ้าง",
+    "usage_intro": "เมื่อแตกไฟล์ zip ของแต่ละชุดออกมา จะได้โฟลเดอร์และไฟล์ตามนี้",
+    "contents_unavailable": "รายละเอียดไฟล์จะแสดงเมื่อชุดข้อมูลนี้เปิดให้ดาวน์โหลด",
     "terms_heading": "เงื่อนไขและการอ้างอิง",
     "citation_heading": "การอ้างอิง",
     "credits_heading": "ผู้จัดทำและแหล่งที่มา",
     "contact_heading": "ติดต่อ",
     "license_pending_title": "สัญญาอนุญาตอยู่ระหว่างพิจารณา",
-
     "privacy_heading": "ประกาศความเป็นส่วนตัว",
     "close": "ปิด",
     "loading": "กำลังโหลด…",
@@ -93,18 +87,15 @@
     "nav_about": "About",
     "nav_poses": "Poses",
     "nav_download": "Download",
-    "nav_usage": "Usage",
+    "nav_usage": "Contents",
     "nav_terms": "Terms & citation",
-
     "status_draft": "Draft — not yet publicly released",
     "status_published": "Released",
     "version_label": "Version",
     "updated_label": "Last updated",
     "license_label": "Licence",
-
     "about_heading": "About this dataset",
     "disclaimer_heading": "Read before using this data",
-
     "poses_heading": "The twelve canonical poses",
     "poses_intro": "Pose names follow the project's canonical list. Other names the same pose has appeared under are recorded under “Also known as”.",
     "poses_col_id": "ID",
@@ -118,7 +109,6 @@
     "identity_not_applicable": "Cannot be assessed",
     "no_restored": "No restored image yet",
     "unmapped_heading": "Items pending review",
-
     "download_heading": "Download the dataset",
     "download_intro": "Fill in a short form once, then download any bundle for the next 24 hours.",
     "bundle_files": "Files",
@@ -130,7 +120,6 @@
     "checksum_hint": "Verify your download with",
     "copy": "Copy",
     "copied": "Copied",
-
     "form_heading": "Request download access",
     "form_email": "Email",
     "form_email_hint": "Used only to contact you about updates to this dataset.",
@@ -146,6 +135,7 @@
     "purpose_commercial": "Commercial use",
     "purpose_other": "Other",
     "form_detail": "Further detail",
+    "form_detail_optional": "if any",
     "form_detail_required": "Please describe your intended use",
     "form_consent": "I have read and consent to the collection and use of my personal data as described in the privacy notice, and I accept the terms of use for this data.",
     "form_privacy_link": "Read the privacy notice",
@@ -158,16 +148,14 @@
     "access_granted": "Downloads unlocked",
     "access_granted_detail": "Valid until {time}. After that, submit the form again.",
     "access_expired": "Your download access has expired. Please submit the form again.",
-
-    "usage_heading": "Using the data",
-    "usage_intro": "Opening the pose library in Python:",
-
+    "usage_heading": "What is inside each bundle",
+    "usage_intro": "Unzip a bundle and you get these folders and files.",
+    "contents_unavailable": "The file listing appears once this bundle is available for download.",
     "terms_heading": "Terms & citation",
     "citation_heading": "Citation",
     "credits_heading": "Credits & provenance",
     "contact_heading": "Contact",
     "license_pending_title": "Licence pending",
-
     "privacy_heading": "Privacy notice",
     "close": "Close",
     "loading": "Loading…",
