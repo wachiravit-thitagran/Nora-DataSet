@@ -31,8 +31,16 @@ COPY data ./data
 
 # Run unprivileged. The bundles are baked in and only ever read, so this user
 # needs write access only to the database directory.
+#
+# /var/lib/nora has to exist here, owned by nora, even though a volume is
+# mounted over it at run time. Docker seeds a new named volume from whatever
+# is at the mount point in the image, ownership included; if the path is
+# missing it creates the volume owned by root instead, and uid 10001 then
+# cannot create the database file inside it. The failure surfaces as a bare
+# "sqlite3.OperationalError: unable to open database file".
 RUN useradd --system --uid 10001 --create-home --shell /usr/sbin/nologin nora \
-    && chown -R nora:nora /srv/app
+    && mkdir -p /var/lib/nora \
+    && chown -R nora:nora /srv/app /var/lib/nora
 USER nora
 
 EXPOSE 8000

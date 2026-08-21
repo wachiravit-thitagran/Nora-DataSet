@@ -8,6 +8,7 @@ personal data is erased.
 
 from __future__ import annotations
 
+import os
 import sqlite3
 import threading
 from contextlib import contextmanager
@@ -60,6 +61,20 @@ def _utcnow() -> str:
 def _connect() -> sqlite3.Connection:
     path = Path(settings.db_path)
     path.parent.mkdir(parents=True, exist_ok=True)
+
+    # sqlite reports an unwritable directory as "unable to open database file",
+    # which says nothing about the cause. The usual cause is a named volume
+    # created before the image had the mount point, so it belongs to root while
+    # the service runs unprivileged. Name it plainly instead.
+    if not os.access(path.parent, os.W_OK):
+        raise RuntimeError(
+            f"Cannot write to {path.parent} (running as uid {os.getuid()}). "
+            "The database directory is not writable by this user — if it is a "
+            "Docker volume, it was probably created root-owned before the "
+            "image declared the directory. Recreate it: "
+            "docker volume rm nora-dataset-db"
+        )
+
     conn = sqlite3.connect(path, timeout=15, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     # WAL keeps readers from blocking the writer; without it, concurrent
