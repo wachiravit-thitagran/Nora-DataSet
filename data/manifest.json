@@ -103,16 +103,16 @@
           "path": "README.txt",
           "kind": "file",
           "note": {
-            "th": "สัญญาอนุญาต ข้อควรทราบ และรูปแบบการอ้างอิง สร้างขึ้นอัตโนมัติตอนแพ็กไฟล์",
-            "en": "Licence, the notice above, and the citation format. Generated at packaging time."
+            "th": "License ข้อควรทราบ และรูปแบบการอ้างอิง สร้างขึ้นอัตโนมัติตอนแพ็กไฟล์",
+            "en": "License, the notice above, and the citation format. Generated at packaging time."
           }
         }
       ],
       "filename": "nora-pose-images-0.1.0-draft.zip",
-      "bytes": 41648650,
-      "sha256": "d5e3238efde6e97e89f5d826bea931e2eae2a6e76d8c6b68fef3547358989595",
+      "bytes": 41648916,
+      "sha256": "6a0ff791b4d0205fe08d21bdaa3154911aff5a37c5669221a96026c6ccce4ae2",
       "file_count": 26,
-      "updated_at": "2026-08-21T16:04:38+00:00",
+      "updated_at": "2026-08-22T18:23:24+00:00",
       "available": true
     },
     {
@@ -149,16 +149,16 @@
           "path": "README.txt",
           "kind": "file",
           "note": {
-            "th": "สัญญาอนุญาต ข้อควรทราบ และรูปแบบการอ้างอิง",
-            "en": "Licence, notice, and citation format."
+            "th": "License ข้อควรทราบ และรูปแบบการอ้างอิง",
+            "en": "License, notice, and citation format."
           }
         }
       ],
       "filename": "nora-generated-videos-0.1.0-draft.zip",
-      "bytes": 39337000,
-      "sha256": "52f6cb9f3a2c071bd40a74f66148c6e51ecd1039b589e0ebaea2ed44c8f23b10",
+      "bytes": 39337267,
+      "sha256": "a29b6ed4fb5c67f092d38166e106be67ae14ec44abe33e511998cf8368c5fe5d",
       "file_count": 21,
-      "updated_at": "2026-08-21T16:04:41+00:00",
+      "updated_at": "2026-08-22T18:23:26+00:00",
       "available": true
     },
     {
@@ -244,12 +244,13 @@
           "path": "README.txt",
           "kind": "file",
           "note": {
-            "th": "สัญญาอนุญาต ข้อควรทราบ และรูปแบบการอ้างอิง",
-            "en": "Licence, notice, and citation format."
+            "th": "License ข้อควรทราบ และรูปแบบการอ้างอิง",
+            "en": "License, notice, and citation format."
           }
         }
       ],
       "filename": null,
+      "filename_planned": "nora-pose-positions-{version}.zip",
       "bytes": null,
       "sha256": null,
       "file_count": null,

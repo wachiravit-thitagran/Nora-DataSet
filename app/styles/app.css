@@ -103,31 +103,54 @@
 
   /* ---- bundle contents ------------------------------------------------ */
 
-  .contents {
-    @apply mt-6 rounded-panel border border-gray-100 bg-white p-8;
+  /* Each bundle is its own card, and the gap between them is deliberately
+     larger than any gap inside one — that spacing is what tells the reader
+     where one archive ends and the next begins. */
+  .bundle-contents {
+    @apply mt-12 rounded-panel border border-gray-100 bg-white p-8 md:p-10;
     box-shadow: 0 4px 16px -6px rgb(0 0 0 / 0.08);
   }
-  .contents h3 { @apply text-base font-bold; }
+  .bundle-contents:first-child { @apply mt-8; }
+  .bundle-contents h3 { @apply mb-6 text-lg font-bold; }
 
-  .contents-file {
-    @apply mt-1 mb-5 font-mono text-xs break-all text-gray-400;
-  }
-
-  .tree { @apply m-0 list-none p-0; }
-
-  .tree-item {
-    @apply grid items-baseline gap-x-6 gap-y-1 border-t border-gray-100 py-3;
+  /* One grid for the whole tree, so every note starts at the same x no matter
+     how long the path beside it is. Rows opt into it with subgrid; the plain
+     grid-template-columns line before it is the fallback for browsers that
+     do not have subgrid, which merely loses that alignment. */
+  .tree {
+    @apply m-0 grid list-none gap-x-8 p-0;
     grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
   }
-  .tree-item:first-child { @apply border-t-0 pt-0; }
+
+  .tree-item {
+    @apply items-baseline gap-y-0.5 py-1.5;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+    grid-template-columns: subgrid;
+  }
   .tree-item code { @apply font-mono text-sm break-words text-gray-800; }
+
+  /* The connectors carry the structure, so they must keep their spaces and
+     must not be picked up when the path is copied out. */
+  .tree-branch { @apply whitespace-pre text-gray-400 select-none; }
+
+  /* The archive is the root: named once, in full, with everything below it
+     relative to the top of the zip. */
+  .tree-item.is-root {
+    @apply mb-1 border-b border-gray-100 pb-3;
+  }
+  .tree-item.is-root code { @apply font-semibold break-all text-gray-900; }
+
   .tree-item.is-dir code { @apply font-semibold; }
-  .tree-item.is-example { @apply border-dashed pl-6; }
   .tree-item.is-example code { @apply text-gray-500; }
   .tree-note { @apply text-sm leading-relaxed text-gray-600; }
 
   @media (max-width: 46rem) {
-    .tree-item { @apply grid-cols-1 gap-1; }
+    .tree { @apply grid-cols-1 gap-x-0; }
+    .tree-item { @apply grid-cols-1 gap-1 py-2; }
+    .tree-item .tree-note { @apply pl-6; }
+    .tree-item.is-example .tree-note { @apply pl-9; }
   }
 
   /* ---- forms ---------------------------------------------------------- */

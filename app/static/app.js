@@ -225,31 +225,72 @@
     if (!host) return;
     host.textContent = "";
 
+    var version = (state.manifest.dataset || {}).version || "";
+
     (state.manifest.bundles || []).forEach(function (bundle) {
       var entries = bundle.contents || [];
       if (!entries.length) return;
 
-      var block = el("section", "contents");
+      var block = el("section", "bundle-contents");
       block.appendChild(el("h3", null, pick(bundle.title)));
-
-      // The archive name is what people actually see in their downloads
-      // folder, so lead with it when we know it.
-      if (bundle.filename) {
-        block.appendChild(el("p", "contents-file", bundle.filename));
-      } else {
-        block.appendChild(el("p", "contents-file muted", t("contents_unavailable")));
-      }
 
       var pendingNote = pick(bundle.pending_note);
       if (pendingNote && !bundle.available) {
         block.appendChild(el("p", "pending-note", pendingNote));
       }
 
+      /* Only "example" entries sit inside something; everything else is at the
+         top level of the archive. Working that out here rather than in the
+         manifest keeps the data a flat list, which is much easier to edit. */
+      var depths = entries.map(function (entry) {
+        return (entry.kind || "file") === "example" ? 1 : 0;
+      });
+
+      function isLastAtLevel(index) {
+        for (var j = index + 1; j < depths.length; j++) {
+          if (depths[j] < depths[index]) return true;
+          if (depths[j] === depths[index]) return false;
+        }
+        return true;
+      }
+
+      function parentIsLast(index) {
+        for (var j = index - 1; j >= 0; j--) {
+          if (depths[j] === 0) return isLastAtLevel(j);
+        }
+        return true;
+      }
+
+      function branch(index) {
+        var elbow = isLastAtLevel(index) ? "└─ " : "├─ ";
+        if (depths[index] === 0) return elbow;
+        return (parentIsLast(index) ? "   " : "│  ") + elbow;
+      }
+
       var list = el("ul", "tree");
-      entries.forEach(function (entry) {
+
+      /* The archive itself is the root of the tree, so every path below it is
+         unambiguously relative to the top of the zip rather than to the
+         folder someone happened to unpack it into. */
+      var archive =
+        bundle.filename ||
+        String(bundle.filename_planned || "").replace("{version}", version);
+      if (archive) {
+        var root = el("li", "tree-item is-root");
+        root.appendChild(el("code", null, archive));
+        if (!bundle.available) {
+          root.appendChild(el("span", "tree-note", t("contents_unavailable")));
+        }
+        list.appendChild(root);
+      }
+
+      entries.forEach(function (entry, index) {
         var kind = entry.kind || "file";
         var li = el("li", "tree-item is-" + kind);
-        li.appendChild(el("code", null, entry.path));
+        var code = el("code");
+        code.appendChild(el("span", "tree-branch", branch(index)));
+        code.appendChild(document.createTextNode(entry.path));
+        li.appendChild(code);
         var note = pick(entry.note);
         if (note) li.appendChild(el("span", "tree-note", note));
         list.appendChild(li);
