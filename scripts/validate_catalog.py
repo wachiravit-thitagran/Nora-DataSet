@@ -73,6 +73,10 @@ def check_manifest(manifest: dict) -> None:
             "licence is still 'pending' — the site must not be opened to the "
             "public until this is resolved"
         )
+    elif not licence.get("url"):
+        # CC BY and every licence like it ask to be linked wherever the terms
+        # are stated; the site only renders a link when this field is set.
+        error("manifest.dataset.license.url is empty for a settled licence")
 
     seen_ids: set[str] = set()
     bundles = manifest.get("bundles", [])

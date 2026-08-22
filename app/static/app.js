@@ -119,6 +119,17 @@
     $$('[data-field="dataset.license"]').forEach(function (n) { n.textContent = licenceName || "—"; });
     $$('[data-field="dataset.license_note"]').forEach(function (n) {
       n.textContent = pick((ds.license && ds.license.note) || "");
+      /* The deed URL is part of the licence, not decoration: CC BY asks that
+         the licence be linked wherever the terms are stated. */
+      var url = ds.license && ds.license.url;
+      if (url) {
+        n.appendChild(document.createTextNode(" "));
+        var a = el("a", "linkish", licenceName || url);
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener license";
+        n.appendChild(a);
+      }
     });
 
     /* Both citation formats, with {version} filled in from the manifest so a

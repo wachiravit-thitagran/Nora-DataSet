@@ -9,7 +9,7 @@
     "nav_terms": "เงื่อนไขและการอ้างอิง",
     "version_label": "เวอร์ชัน",
     "updated_label": "ปรับปรุงล่าสุด",
-    "license_label": "สัญญาอนุญาต",
+    "license_label": "License",
     "about_heading": "เกี่ยวกับชุดข้อมูล",
     "download_heading": "ดาวน์โหลดชุดข้อมูล",
     "download_intro": "กรอกแบบฟอร์มหนึ่งครั้ง จากนั้นจะสามารถดาวน์โหลดได้ทุกชุดข้อมูลภายใน 24 ชั่วโมง",
@@ -56,12 +56,12 @@
     "terms_heading": "เงื่อนไขและการอ้างอิง",
     "citation_heading": "การอ้างอิง",
     "contact_heading": "ติดต่อ",
-    "license_pending_title": "สัญญาอนุญาต",
+    "license_title": "License",
     "privacy_heading": "ประกาศความเป็นส่วนตัว",
     "close": "ปิด",
     "loading": "กำลังโหลด…",
     "load_error": "โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ",
-    "citation_ieee": "รูปแบบ IEEE",
+    "citation_ieee": "IEEE",
     "citation_bibtex": "BibTeX"
   },
   "en": {
@@ -74,7 +74,7 @@
     "nav_terms": "Terms & citation",
     "version_label": "Version",
     "updated_label": "Last updated",
-    "license_label": "Licence",
+    "license_label": "License",
     "about_heading": "About this dataset",
     "download_heading": "Download the dataset",
     "download_intro": "Complete the form once to download any bundle for the next 24 hours.",
@@ -121,12 +121,12 @@
     "terms_heading": "Terms & citation",
     "citation_heading": "Citation",
     "contact_heading": "Contact",
-    "license_pending_title": "Licence",
+    "license_title": "License",
     "privacy_heading": "Privacy notice",
     "close": "Close",
     "loading": "Loading…",
     "load_error": "Could not load the catalogue. Please refresh the page.",
-    "citation_ieee": "IEEE style",
+    "citation_ieee": "IEEE",
     "citation_bibtex": "BibTeX"
   }
 }
