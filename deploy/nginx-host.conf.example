@@ -1,10 +1,11 @@
-# Host nginx configuration for the Nora dataset service on ainora-agent.
+# Host nginx configuration for the Nora dataset service.
 #
 # nginx reserves exactly one path: /dataset/
 # Everything behind it — the page, the API, the access form, the bundle
 # downloads — is routed to the application and handled there.
 #
-# Paste this into the existing server { } block that serves the ainora domain.
+# Paste both location blocks into the existing server { } block that serves
+# the ainora domain. Nothing else needs to change.
 
 location /dataset/ {
     proxy_pass         http://127.0.0.1:10095/;
@@ -23,25 +24,61 @@ location /dataset/ {
     proxy_set_header X-Forwarded-Proto  $scheme;
     proxy_set_header X-Forwarded-Prefix /dataset;
 
-    proxy_connect_timeout 5s;
-    proxy_read_timeout    60s;
-
-    # Required, not optional. Bundles are hundreds of megabytes; with the
+    # ---- streaming ---------------------------------------------------------
+    #
+    # Required, not optional. The bundles are tens of megabytes; with the
     # default settings nginx writes each download to proxy_temp_path before
-    # sending it to the client — a full extra disk write per download.
+    # sending any of it to the client — a full extra disk write per download,
+    # and nothing reaches the browser until the copy finishes.
     # Confirmed in the error log as:
     #   "an upstream response is buffered to a temporary file"
     proxy_buffering          off;
     proxy_max_temp_file_size 0;
 
-    # Downloads take as long as the client's connection needs.
-    proxy_send_timeout 1h;
+    # ---- timeouts ----------------------------------------------------------
+    #
+    # Three different clocks, and only two of them matter here.
+    #
+    # send_timeout governs writing the *response to the client*, and the
+    # clock runs between two successive writes — not over the whole
+    # transfer. A merely slow client is therefore fine at any setting:
+    # measured here, a client pulling at 250 kB/s for 15 seconds completed
+    # even with send_timeout 1s, because nginx kept writing.
+    #
+    # What it does catch is a client that stops accepting data outright —
+    # a phone entering a tunnel, a laptop suspending mid-download. Measured
+    # against a client that stalled for 5 seconds:
+    #
+    #   send_timeout 2s   -> 3,968,872 of 41,649,010 bytes, then closed
+    #   send_timeout 15m  -> all 41,649,010 bytes
+    #
+    # nginx logs it as "client timed out (110: Connection timed out) while
+    # sending to client". The client gets a truncated zip with a 200 status,
+    # so it fails as a corrupt archive rather than as an obvious error.
+    # The default is 60s.
+    send_timeout 15m;
+
+    # proxy_read_timeout governs reading the *response from the application*.
+    # With proxy_buffering off the response is passed through synchronously,
+    # so a client that stops accepting data also stalls nginx's reads from
+    # upstream — and this clock is what expires. The default 60s is fine for
+    # the API but too short for a large download over a poor connection.
+    proxy_read_timeout 15m;
+
+    # proxy_send_timeout is about transmitting the *request* to the
+    # application. Requests here are a URL and a token, so it is irrelevant
+    # to downloads. This note exists because an earlier version of this file
+    # set it to 1h believing it governed downloads. It does not: with
+    # proxy_send_timeout 2s and the same stalling client above, the download
+    # still completed in full.
+
+    proxy_connect_timeout 5s;
 }
 
 
-# Optional three-liner so the bare path works too. Without it,
-# https://<host>/dataset (no trailing slash) returns 404, because the block
-# above only matches the version with the slash.
+# Three-liner so the bare path works too. Without it, https://<host>/dataset
+# (no trailing slash) returns 404, because the block above only matches the
+# version with the slash.
 
 location = /dataset {
     return 301 /dataset/;
@@ -52,18 +89,18 @@ location = /dataset {
 # What must match on the application side
 # ============================================================================
 #
-# In docker-compose.yml:
+# In deploy/docker-compose.yml:
 #
 #   ports:       "127.0.0.1:10095:8000"   <- matches proxy_pass above
 #   ROOT_PATH:   /dataset                 <- matches the location path
-#   USE_XACCEL:  "false"                  <- the app serves the bytes
+#   USE_XACCEL:  "false"                  <- the app serves the bytes itself
 #
-# The bundle files themselves are mounted into the container only:
+# The bundle files ship inside the image. nginx never touches them, so nginx
+# and the container share no filesystem, and the only volume in play is
+# nora-dataset-db, which holds the database and nothing else.
 #
-#   volumes:     nora-dataset-db (named volume, database only)
-#
-# nginx never touches them, so nginx and the container do not need to share
-# any filesystem.
+# Because the port is published on 127.0.0.1 only, the service is reachable
+# through nginx and no other way.
 
 
 # ============================================================================
@@ -72,24 +109,39 @@ location = /dataset {
 #
 #   nginx -t && systemctl reload nginx
 #
-#   # 1. The application is up.
+#   # 1. The application is up, through nginx.
 #   curl -s https://<host>/dataset/api/health
 #   # -> {"status":"ok"}
 #
-#   # 2. A download without a token is refused.
+#   # 2. The bare path redirects.
+#   curl -s -o /dev/null -w '%{http_code}\n' https://<host>/dataset
+#   # -> 301
+#
+#   # 3. A download without a token is refused.
 #   curl -s -o /dev/null -w '%{http_code}\n' \
 #        https://<host>/dataset/api/download/pose-images
 #   # -> 403
 #
-#   # 3. A real download returns the whole file.
-#   #    Mint a token with scripts/mint_token.py, then:
+#   # 4. A real download returns the whole file.
+#   #    Mint a token inside the container, where SECRET_KEY already lives:
+#   #      docker exec ainora-dataset-web python3 scripts/mint_token.py --ttl 300
 #   curl -s -o /dev/null -w '%{http_code} %{size_download}\n' \
 #        "https://<host>/dataset/api/download/pose-images?t=<token>"
 #   # -> 200 and a size matching `bytes` in manifest.json.
 #
-#   # 4. Resume works.
+#   # 5. Resume works, so an interrupted download does not start over.
 #   curl -s -r 0-99 -o /dev/null -w '%{http_code} %{size_download}\n' \
 #        "https://<host>/dataset/api/download/pose-images?t=<token>"
 #   # -> 206 100
 #
-# All four also run automatically in the Jenkins `Smoke tests` stage.
+#   # 6. Nothing was buffered to disk on the way.
+#   grep "buffered to a temporary file" /var/log/nginx/error.log | tail
+#   # -> no new lines after the download above
+#
+# Checks 1 and 3 also run in the Jenkins pipeline, but only as a best-effort
+# step: the agent cannot always reach the host's own address, and when it
+# cannot it reports that and moves on rather than failing the deploy. The
+# application-side checks it does run every time are in scripts/smoke_check.py,
+# which runs inside the container and never touches nginx. That leaves the
+# proxy itself as the one thing no pipeline stage proves — so run this list by
+# hand after any nginx change.
