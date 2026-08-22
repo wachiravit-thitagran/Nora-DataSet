@@ -159,6 +159,24 @@ def check_i18n() -> None:
         error(f"i18n: index.html uses '{key}' but it is not defined")
 
 
+def check_stylesheet() -> None:
+    """The stylesheet is compiled from app/styles/app.css and committed.
+
+    Nothing at runtime rebuilds it, so an edit to the source that is not
+    followed by `npm run css` ships the previous design silently. Comparing
+    mtimes catches that in CI, where both files come out of the same checkout.
+    """
+    source = PROJECT_ROOT / "app" / "styles" / "app.css"
+    built = PROJECT_ROOT / "app" / "static" / "style.css"
+    if not source.exists() or not built.exists():
+        return
+    if source.stat().st_mtime > built.stat().st_mtime:
+        warn(
+            "app/styles/app.css is newer than app/static/style.css — "
+            "run `npm run css` and commit the result"
+        )
+
+
 def main() -> int:
     manifest = load(DATA_DIR / "manifest.json")
     poses = load(DATA_DIR / "poses.json")
@@ -168,6 +186,7 @@ def main() -> int:
     if poses:
         check_poses(poses)
     check_i18n()
+    check_stylesheet()
 
     for message in warnings:
         print(f"warning: {message}")

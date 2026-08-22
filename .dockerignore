@@ -17,3 +17,8 @@ Jenkinsfile
 .gitlab-ci.yml
 *.md
 !README.md
+
+# Tailwind build inputs — the compiled app/static/style.css is what ships
+node_modules/
+app/styles/
+package*.json

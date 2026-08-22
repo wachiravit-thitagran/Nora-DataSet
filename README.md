@@ -42,7 +42,8 @@ Nora-Dataset/
 │   ├── auth.py              โทเคน HMAC (stateless, หมุน SECRET_KEY = เพิกถอนทุกใบ)
 │   ├── db.py                SQLite: access_request + download_event
 │   ├── main.py              /api/catalog, /api/access, /api/download/{id}
-│   └── static/              หน้าเว็บ (ไม่มี build step, ไม่มี framework)
+│   ├── static/              หน้าเว็บที่เสิร์ฟจริง (style.css คือไฟล์ที่ build แล้ว)
+│   └── styles/app.css       ต้นทาง Tailwind — แก้ที่นี่แล้วรัน npm run css
 ├── data/
 │   ├── manifest.json        แคตตาล็อก — ขับเคลื่อนทั้งหน้าเว็บ
 │   ├── poses.json           ชื่อท่ามาตรฐาน 12 ท่า + aliases + สถานะภาพ
@@ -85,6 +86,21 @@ pytest tests -q
 ruff check app scripts tests
 python3 scripts/validate_catalog.py
 ```
+
+### แก้หน้าตาเว็บ
+
+หน้าเว็บใช้ **Tailwind v4 + daisyUI v5** ชุดเดียวกับ ainora.psu.ac.th
+`app/static/style.css` เป็นไฟล์ที่ **build แล้วและ commit ไว้** ตัว image กับตอนรัน
+จึงไม่ต้องมี Node เลย แก้ที่ `app/styles/app.css` แล้ว
+
+```bash
+npm install        # ครั้งแรกเท่านั้น
+npm run css        # build ใหม่
+npm run css:watch  # ระหว่างแก้
+```
+
+แล้ว **commit `app/static/style.css` ไปด้วยทุกครั้ง** — `validate_catalog.py`
+จะเตือนถ้าไฟล์ต้นทางใหม่กว่าไฟล์ที่ build ไว้
 
 ---
 

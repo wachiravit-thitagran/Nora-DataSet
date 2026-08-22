@@ -1,0 +1,178 @@
+/* Nora Dataset — Tailwind source.
+ *
+ * Compiled to app/static/style.css and committed, so the served page needs no
+ * build step and the runtime image needs no Node. Regenerate with:
+ *
+ *     npm run css          (once)
+ *     npm run css:watch    (while editing)
+ *
+ * Tailwind v4 + daisyUI v5 to match ainora.psu.ac.th, which is built on the
+ * same pair — the navbar, btn, card and menu classes below are theirs, so the
+ * two sites render from the same component vocabulary rather than from a
+ * hand-written imitation of it.
+ */
+
+@import "tailwindcss";
+@source "../static/*.html";
+@source "../static/*.js";
+
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+/* Tokens read off ainora.psu.ac.th with the browser's computed styles. */
+@theme {
+  --color-gold: #d4af37;
+  --color-gold-soft: #f9e076;
+  --color-gold-deep: #b5952f;
+
+  --font-sans: "Noto Sans Thai", "Sarabun", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Noto Sans Thai", ui-sans-serif, system-ui, sans-serif;
+
+  /* 40px cards and the long soft shadow are the parent site's signature. */
+  --radius-card: 40px;
+  --radius-panel: 1.5rem;
+  --shadow-card: 0 20px 50px -12px rgb(0 0 0 / 0.1);
+}
+
+/* daisyUI's light theme, pulled onto the gold. */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #d4af37;
+  --color-primary-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #f9fafb;
+  --color-base-300: #f3f4f6;
+  --color-base-content: #1c1917;
+  --radius-box: 1.5rem;
+  --radius-field: 9999px;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 font-sans text-gray-700 antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-heading text-gray-900;
+  }
+  /* Thai script gains nothing from uppercase or wide tracking; the parent
+     site applies them only to the Latin wordmark, and so does this. */
+  address {
+    @apply not-italic;
+  }
+}
+
+@layer components {
+
+  /* ---- section rhythm ------------------------------------------------- */
+
+  .section-label {
+    @apply mb-3 flex items-center gap-3 text-xs font-semibold tracking-[0.2em]
+           text-gold uppercase;
+  }
+  .section-label::before {
+    content: "";
+    @apply block h-px w-8 bg-gold;
+  }
+
+  /* ---- bundle cards (built in app.js) --------------------------------- */
+
+  .bundle {
+    @apply flex flex-col rounded-card border border-gray-100
+           bg-white p-8;
+    box-shadow: var(--shadow-card);
+  }
+  .bundle h3 { @apply mb-2 text-lg font-bold; }
+  .bundle > p { @apply mb-5 text-sm leading-relaxed text-gray-600; }
+
+  .bundle-meta {
+    @apply mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-2 text-xs text-gray-500;
+  }
+  .bundle-meta b { @apply font-semibold text-gray-800; }
+
+  .checksum {
+    @apply mt-4 rounded-2xl bg-gray-50 p-3 font-mono text-[0.68rem]
+           leading-relaxed break-all text-gray-500;
+  }
+
+  .pending-note {
+    @apply mt-4 rounded-r-2xl border-l-[3px] border-gold bg-amber-50/70
+           px-4 py-3 text-sm leading-relaxed text-gray-600;
+  }
+
+  /* ---- bundle contents ------------------------------------------------ */
+
+  .contents {
+    @apply mt-6 rounded-panel border border-gray-100 bg-white p-8;
+    box-shadow: 0 4px 16px -6px rgb(0 0 0 / 0.08);
+  }
+  .contents h3 { @apply text-base font-bold; }
+
+  .contents-file {
+    @apply mt-1 mb-5 font-mono text-xs break-all text-gray-400;
+  }
+
+  .tree { @apply m-0 list-none p-0; }
+
+  .tree-item {
+    @apply grid items-baseline gap-x-6 gap-y-1 border-t border-gray-100 py-3;
+    grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+  }
+  .tree-item:first-child { @apply border-t-0 pt-0; }
+  .tree-item code { @apply font-mono text-sm break-words text-gray-800; }
+  .tree-item.is-dir code { @apply font-semibold; }
+  .tree-item.is-example { @apply border-dashed pl-6; }
+  .tree-item.is-example code { @apply text-gray-500; }
+  .tree-note { @apply text-sm leading-relaxed text-gray-600; }
+
+  @media (max-width: 46rem) {
+    .tree-item { @apply grid-cols-1 gap-1; }
+  }
+
+  /* ---- forms ---------------------------------------------------------- */
+
+  .field { @apply mb-5; }
+  /* :not(.field-check) — the consent row carries both classes, and turning
+     its label into a flex row put the privacy link in a column of its own,
+     wrapping it one word per line. */
+  .field:not(.field-check) > label {
+    @apply mb-2 flex items-baseline gap-2 text-sm font-semibold text-gray-800;
+  }
+  .field .optional { @apply text-xs font-normal text-gray-400; }
+  .field input[type="email"],
+  .field input[type="text"],
+  .field select,
+  .field textarea {
+    @apply w-full rounded-2xl border border-gray-200 bg-white px-4 py-2.5
+           text-base text-gray-900 outline-none transition
+           focus:border-gold focus:ring-2 focus:ring-gold/30;
+  }
+  .field textarea { @apply min-h-24 resize-y; }
+  .hint { @apply mt-1.5 text-xs text-gray-400; }
+
+  .field-check { @apply flex items-start gap-3; }
+  .field-check input { @apply mt-1 size-4 flex-none accent-gold; }
+  .field-check label { @apply text-sm leading-relaxed text-gray-600; }
+
+  .form-error {
+    @apply mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700;
+  }
+
+  /* inline, so it flows inside the consent sentence instead of being pushed
+     into a column of its own and wrapping a word at a time. */
+  .linkish {
+    @apply inline cursor-pointer border-0 bg-transparent p-0 text-left
+           font-[inherit] text-gold underline underline-offset-2
+           hover:text-gold-deep;
+  }
+
+  /* ---- code blocks ---------------------------------------------------- */
+
+  .code {
+    @apply overflow-x-auto rounded-panel border border-gray-100
+           bg-white p-5 font-mono text-[0.82rem] leading-relaxed text-gray-800;
+  }
+  .code code { @apply whitespace-pre; }
+  .cite-label { @apply mt-6 mb-2 text-xs font-semibold text-gray-400; }
+}

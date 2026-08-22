@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,115 +8,150 @@
 <!-- Same faces as ainora.psu.ac.th, so the two sites read as one product. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&family=Sarabun:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<a class="skip-link" href="#main" data-i18n="skip_to_content">ข้ามไปยังเนื้อหาหลัก</a>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-gold focus:px-4 focus:py-2 focus:text-white"
+   href="#main" data-i18n="skip_to_content">ข้ามไปยังเนื้อหาหลัก</a>
 
-<header class="site-header">
-  <div class="wrap header-inner">
-    <div class="brand">
-      <span class="brand-mark" aria-hidden="true"></span>
-      <span class="brand-text" data-field="dataset.title">&nbsp;</span>
-    </div>
-    <nav class="site-nav" aria-label="Sections">
-      <a href="#about" data-i18n="nav_about">เกี่ยวกับชุดข้อมูล</a>
-      <a href="#download" data-i18n="nav_download">ดาวน์โหลด</a>
-      <a href="#usage" data-i18n="nav_usage">ไฟล์ในชุดข้อมูล</a>
-      <a href="#terms" data-i18n="nav_terms">เงื่อนไขและการอ้างอิง</a>
-    </nav>
-    <button type="button" id="lang-toggle" class="lang-toggle" data-i18n="switch_to">English</button>
+<!-- Header: the parent site's navbar, class for class. -->
+<div class="navbar sticky top-0 z-50 h-20 border-b border-gray-100 bg-white/80 px-4 backdrop-blur-md lg:px-8">
+  <div class="flex-1">
+    <a href="https://ainora.psu.ac.th" class="btn btn-ghost gap-3 px-0 text-xl font-bold text-gray-800 normal-case hover:bg-transparent lg:text-2xl">
+      <span class="flex size-10 items-center justify-center rounded-full bg-gradient-to-tr from-gold to-gold-soft text-white shadow-md" aria-hidden="true">
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5Z"/>
+          <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5Z"/>
+        </svg>
+      </span>
+      <span class="tracking-widest">AINORA</span>
+    </a>
   </div>
-</header>
+
+  <div class="hidden items-center gap-2 lg:flex">
+    <ul class="menu menu-horizontal gap-1 px-1 font-medium text-gray-600">
+      <li><a href="#about" class="rounded-full px-5 hover:bg-orange-50 hover:text-gold" data-i18n="nav_about">เกี่ยวกับชุดข้อมูล</a></li>
+      <li><a href="#download" class="rounded-full px-5 hover:bg-orange-50 hover:text-gold" data-i18n="nav_download">ดาวน์โหลด</a></li>
+      <li><a href="#usage" class="rounded-full px-5 hover:bg-orange-50 hover:text-gold" data-i18n="nav_usage">โครงสร้างไฟล์</a></li>
+      <li><a href="#terms" class="rounded-full px-5 hover:bg-orange-50 hover:text-gold" data-i18n="nav_terms">เงื่อนไขและการอ้างอิง</a></li>
+    </ul>
+    <button type="button" id="lang-toggle"
+            class="btn btn-sm rounded-full border-gray-200 bg-white font-semibold text-gray-600 hover:border-gold hover:text-gold"
+            data-i18n="switch_to">English</button>
+  </div>
+
+  <div class="flex items-center gap-2 lg:hidden">
+    <button type="button" id="lang-toggle-sm"
+            class="btn btn-sm rounded-full border-gray-200 bg-white font-semibold text-gray-600"
+            data-i18n="switch_to">English</button>
+  </div>
+</div>
 
 <main id="main">
 
-  <section class="hero">
-    <div class="wrap">
-      <h1 data-field="dataset.title">&nbsp;</h1>
-      <p class="lede" data-field="dataset.summary">&nbsp;</p>
-      <dl class="meta-row">
-        <div>
-          <dt data-i18n="version_label">เวอร์ชัน</dt>
-          <dd data-field="dataset.version">—</dd>
-        </div>
-        <div>
-          <dt data-i18n="updated_label">ปรับปรุงล่าสุด</dt>
-          <dd data-field="dataset.released_at">—</dd>
-        </div>
-        <div>
-          <dt data-i18n="license_label">สัญญาอนุญาต</dt>
-          <dd data-field="dataset.license">—</dd>
-        </div>
-      </dl>
+  <!-- Hero: same shape as the parent's — full-bleed art, content anchored to
+       the bottom, a translucent pill above the title. hero.jpg is optional;
+       without it the gradient below carries the same warm ground. -->
+  <section class="relative flex h-[62vh] min-h-[26rem] w-full items-end justify-center overflow-hidden bg-gradient-to-b from-[#f6ecd2] via-[#faf3e4] to-gray-50">
+    <div class="absolute inset-0 z-0">
+      <img src="hero.jpg" alt="" aria-hidden="true" class="size-full object-cover object-top opacity-90"
+           onerror="this.remove()">
+      <div class="absolute inset-0 bg-gradient-to-t from-gray-50 via-gray-50/20 to-transparent"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto max-w-4xl px-6 pb-16 text-center">
+      <span class="mb-5 inline-block rounded-full border border-white/60 bg-white/50 px-4 py-1 text-xs font-semibold tracking-[0.25em] text-gray-700 uppercase backdrop-blur-md">
+        Nora AI Dataset
+      </span>
+      <h1 class="mb-5 text-4xl leading-tight font-bold drop-shadow-sm md:text-6xl" data-field="dataset.title">&nbsp;</h1>
+      <p class="mx-auto max-w-2xl text-base text-gray-600 md:text-lg" data-field="dataset.summary">&nbsp;</p>
     </div>
   </section>
 
-  <section id="about" class="wrap section">
-    <h2 data-i18n="about_heading">เกี่ยวกับชุดข้อมูล</h2>
-    <p class="prose" data-field="dataset.description">&nbsp;</p>
+  <div class="container mx-auto max-w-6xl px-6">
 
-    <div class="callout callout-warning" id="disclaimer-box">
-      <h3 data-i18n="disclaimer_heading">ข้อควรทราบก่อนใช้ข้อมูล</h3>
-      <p data-field="dataset.disclaimer">&nbsp;</p>
-    </div>
-  </section>
+    <!-- Meta strip, lifted onto the hero the way the parent lifts its search bar. -->
+    <dl class="relative z-20 -mt-10 grid grid-cols-2 gap-6 rounded-panel border border-gray-100 bg-white px-8 py-6 shadow-[0_20px_50px_-12px_rgb(0_0_0/0.1)] sm:grid-cols-3">
+      <div>
+        <dt class="text-xs text-gray-400" data-i18n="version_label">เวอร์ชัน</dt>
+        <dd class="mt-0.5 font-bold text-gray-900 tabular-nums" data-field="dataset.version">—</dd>
+      </div>
+      <div>
+        <dt class="text-xs text-gray-400" data-i18n="updated_label">ปรับปรุงล่าสุด</dt>
+        <dd class="mt-0.5 font-bold text-gray-900" data-field="dataset.released_at">—</dd>
+      </div>
+      <div class="col-span-2 sm:col-span-1">
+        <dt class="text-xs text-gray-400" data-i18n="license_label">สัญญาอนุญาต</dt>
+        <dd class="mt-0.5 font-bold text-gray-900" data-field="dataset.license">—</dd>
+      </div>
+    </dl>
 
-  <section id="download" class="wrap section">
-    <h2 data-i18n="download_heading">ดาวน์โหลดชุดข้อมูล</h2>
-    <p class="prose" data-i18n="download_intro"></p>
+    <section id="about" class="scroll-mt-28 py-16">
+      <p class="section-label">About</p>
+      <h2 class="mb-4 text-2xl font-bold md:text-3xl" data-i18n="about_heading">เกี่ยวกับชุดข้อมูล</h2>
+      <p class="max-w-3xl leading-relaxed text-gray-600" data-field="dataset.description">&nbsp;</p>
+    </section>
 
-    <div class="grant-banner" id="grant-banner" hidden>
-      <strong data-i18n="access_granted">เปิดสิทธิ์ดาวน์โหลดแล้ว</strong>
-      <span id="grant-detail"></span>
-    </div>
+    <section id="download" class="scroll-mt-28 border-t border-gray-100 py-16">
+      <p class="section-label">Download</p>
+      <h2 class="mb-2 text-2xl font-bold md:text-3xl" data-i18n="download_heading">ดาวน์โหลดชุดข้อมูล</h2>
+      <p class="mb-8 max-w-3xl text-gray-600" data-i18n="download_intro"></p>
 
-    <div class="bundle-grid" id="bundle-grid"></div>
+      <div class="mb-8 flex flex-wrap items-center gap-3 rounded-panel border border-gold/40 bg-amber-50/70 px-6 py-4"
+           id="grant-banner" hidden>
+        <strong class="font-semibold text-gray-900" data-i18n="access_granted">เปิดสิทธิ์ดาวน์โหลดแล้ว</strong>
+        <span class="text-sm text-gray-600" id="grant-detail"></span>
+      </div>
 
-  </section>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="bundle-grid"></div>
+    </section>
 
-  <section id="usage" class="wrap section">
-    <h2 data-i18n="usage_heading">ในไฟล์มีอะไรบ้าง</h2>
-    <p class="prose" data-i18n="usage_intro"></p>
-    <div id="contents-list"></div>
-  </section>
+    <section id="usage" class="scroll-mt-28 border-t border-gray-100 py-16">
+      <p class="section-label">Contents</p>
+      <h2 class="mb-2 text-2xl font-bold md:text-3xl" data-i18n="usage_heading">โครงสร้างไฟล์ในชุดข้อมูล</h2>
+      <p class="max-w-3xl text-gray-600" data-i18n="usage_intro"></p>
+      <div id="contents-list"></div>
+    </section>
 
-  <section id="terms" class="wrap section">
-    <h2 data-i18n="terms_heading">เงื่อนไขและการอ้างอิง</h2>
+    <section id="terms" class="scroll-mt-28 border-t border-gray-100 py-16">
+      <p class="section-label">Terms</p>
+      <h2 class="mb-6 text-2xl font-bold md:text-3xl" data-i18n="terms_heading">เงื่อนไขและการอ้างอิง</h2>
 
-    <div class="callout" id="license-box">
-      <h3 data-i18n="license_pending_title">สัญญาอนุญาตอยู่ระหว่างพิจารณา</h3>
-      <p data-field="dataset.license_note">&nbsp;</p>
-    </div>
+      <div class="mb-8 rounded-panel border border-gray-100 bg-white p-6 shadow-[0_4px_16px_-6px_rgb(0_0_0/0.08)]"
+           id="license-box">
+        <h3 class="mb-1 text-base font-bold" data-i18n="license_pending_title">สัญญาอนุญาต</h3>
+        <p class="text-gray-600" data-field="dataset.license_note">&nbsp;</p>
+      </div>
 
-    <h3 data-i18n="citation_heading">การอ้างอิง</h3>
-    <p class="cite-label" data-i18n="citation_ieee">IEEE</p>
-    <pre class="code"><code id="citation-text">—</code></pre>
-    <p class="cite-label" data-i18n="citation_bibtex">BibTeX</p>
-    <pre class="code"><code id="citation-bibtex">—</code></pre>
+      <h3 class="text-base font-bold" data-i18n="citation_heading">การอ้างอิง</h3>
+      <p class="cite-label" data-i18n="citation_ieee">รูปแบบ IEEE</p>
+      <pre class="code"><code id="citation-text">—</code></pre>
+      <p class="cite-label" data-i18n="citation_bibtex">BibTeX</p>
+      <pre class="code"><code id="citation-bibtex">—</code></pre>
 
-    <h3 data-i18n="contact_heading">ติดต่อ</h3>
-    <p id="contact-text" class="prose">—</p>
-  </section>
+      <h3 class="mt-8 text-base font-bold" data-i18n="contact_heading">ติดต่อ</h3>
+      <p id="contact-text" class="text-gray-600">—</p>
+    </section>
 
+  </div>
 </main>
 
-<footer class="site-footer">
-  <div class="wrap footer-inner">
-    <div class="footer-brand">
-      <!-- ainora.psu.ac.th is the project's home; this site is one part of it. -->
-      <a class="footer-title" href="https://ainora.psu.ac.th">AINORA</a>
-      <p class="footer-tagline">โครงการอนุรักษ์มรดกทางวัฒนธรรมและภูมิปัญญาไทย
-        ผ่านนวัตกรรมดิจิทัลเพื่อการเรียนรู้ที่ยั่งยืน</p>
+<footer class="border-t border-gray-100 bg-white py-14">
+  <div class="container mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="lg:col-span-1">
+      <a class="text-lg font-bold tracking-[0.12em] text-gray-900 hover:text-gold-deep" href="https://ainora.psu.ac.th">AINORA</a>
+      <p class="mt-3 max-w-xs text-sm leading-relaxed text-gray-500">
+        โครงการอนุรักษ์มรดกทางวัฒนธรรมและภูมิปัญญาไทย
+        ผ่านนวัตกรรมดิจิทัลเพื่อการเรียนรู้ที่ยั่งยืน
+      </p>
     </div>
 
-    <!-- Both languages are always shown, labelled, rather than following the
-         page toggle: an address is read by whoever needs to reach the office,
-         and that is not always the reader who set the language. -->
-    <div class="footer-office">
-      <h2>Office (EN)</h2>
-      <address>
+    <!-- Both languages always, labelled: an address is read by whoever needs
+         to reach the office, not only by the reader who set the language. -->
+    <div>
+      <h2 class="mb-2 text-xs font-semibold text-gray-400">Office (EN)</h2>
+      <address class="text-sm leading-relaxed text-gray-500">
         Digital Innovation and Intelligent Systems,<br>
         Prince of Songkla University<br>
         15 Karnchanavanich Rd., Hat Yai,<br>
@@ -124,9 +159,9 @@
       </address>
     </div>
 
-    <div class="footer-office">
-      <h2>สำนักงาน (TH)</h2>
-      <address>
+    <div>
+      <h2 class="mb-2 text-xs font-semibold text-gray-400">สำนักงาน (TH)</h2>
+      <address class="text-sm leading-relaxed text-gray-500">
         สำนักนวัตกรรมดิจิทัลและระบบอัจฉริยะ<br>
         มหาวิทยาลัยสงขลานครินทร์<br>
         15 ถ.กาญจนวณิชย์ ต.หาดใหญ่<br>
@@ -134,21 +169,23 @@
       </address>
     </div>
 
-    <div class="footer-office">
-      <h2>ติดต่อเรา</h2>
-      <address>
-        <a href="https://diis.psu.ac.th/">diis.psu.ac.th</a><br>
-        <a href="tel:+6674282119">074-282119</a><br>
-        <a href="mailto:ainora@psu.ac.th">ainora@psu.ac.th</a>
+    <div>
+      <h2 class="mb-2 text-xs font-semibold text-gray-400">ติดต่อเรา</h2>
+      <address class="text-sm leading-relaxed text-gray-500">
+        <a class="hover:text-gold-deep hover:underline" href="https://diis.psu.ac.th/">diis.psu.ac.th</a><br>
+        <a class="hover:text-gold-deep hover:underline" href="tel:+6674282119">074-282119</a><br>
+        <a class="hover:text-gold-deep hover:underline" href="mailto:ainora@psu.ac.th">ainora@psu.ac.th</a>
       </address>
     </div>
   </div>
 </footer>
 
-<dialog id="access-dialog" class="dialog dialog-form">
-  <article>
-    <button type="button" class="dialog-close" id="close-access" aria-label="Close">&times;</button>
-    <h2 data-i18n="form_heading">ขอสิทธิ์ดาวน์โหลด</h2>
+<dialog id="access-dialog" class="modal">
+  <div class="modal-box max-w-lg rounded-panel bg-white">
+    <button type="button" id="close-access" aria-label="Close"
+            class="btn btn-sm btn-circle btn-ghost absolute top-3 right-3 text-gray-400">✕</button>
+    <h2 class="mb-5 pr-8 text-xl font-bold" data-i18n="form_heading">ขอสิทธิ์ดาวน์โหลด</h2>
+
     <form id="access-form" novalidate>
       <div class="field">
         <label for="f-email" data-i18n="form_email">อีเมล</label>
@@ -158,8 +195,8 @@
 
       <div class="field">
         <label for="f-org">
-        <span data-i18n="form_org">หน่วยงาน / สังกัด</span>
-        <span class="optional" data-i18n="form_org_optional">ไม่บังคับ</span>
+          <span data-i18n="form_org">หน่วยงาน / สังกัด</span>
+          <span class="optional" data-i18n="form_org_optional">ไม่บังคับ</span>
         </label>
         <input type="text" id="f-org" name="organization" autocomplete="organization" maxlength="200">
       </div>
@@ -167,21 +204,21 @@
       <div class="field">
         <label for="f-purpose" data-i18n="form_purpose">วัตถุประสงค์การนำไปใช้</label>
         <select id="f-purpose" name="purpose" required>
-        <option value="" data-i18n="form_purpose_placeholder">เลือกวัตถุประสงค์</option>
-        <option value="research" data-i18n="purpose_research"></option>
-        <option value="education" data-i18n="purpose_education"></option>
-        <option value="cultural_preservation" data-i18n="purpose_cultural_preservation"></option>
-        <option value="journalism" data-i18n="purpose_journalism"></option>
-        <option value="commercial" data-i18n="purpose_commercial"></option>
-        <option value="personal" data-i18n="purpose_personal"></option>
-        <option value="other" data-i18n="purpose_other"></option>
+          <option value="" data-i18n="form_purpose_placeholder">เลือกวัตถุประสงค์</option>
+          <option value="research" data-i18n="purpose_research"></option>
+          <option value="education" data-i18n="purpose_education"></option>
+          <option value="cultural_preservation" data-i18n="purpose_cultural_preservation"></option>
+          <option value="journalism" data-i18n="purpose_journalism"></option>
+          <option value="commercial" data-i18n="purpose_commercial"></option>
+          <option value="personal" data-i18n="purpose_personal"></option>
+          <option value="other" data-i18n="purpose_other"></option>
         </select>
       </div>
 
       <div class="field">
         <label for="f-detail">
-        <span data-i18n="form_detail">รายละเอียดเพิ่มเติม</span>
-        <span class="optional" data-i18n="form_detail_optional">ถ้ามี</span>
+          <span data-i18n="form_detail">รายละเอียดเพิ่มเติม</span>
+          <span class="optional" data-i18n="form_detail_optional">ถ้ามี</span>
         </label>
         <textarea id="f-detail" name="purpose_detail" rows="3" maxlength="1000"></textarea>
       </div>
@@ -189,26 +226,27 @@
       <div class="field field-check">
         <input type="checkbox" id="f-consent" name="consent" required>
         <label for="f-consent">
-        <span id="consent-text" data-i18n="form_consent"></span>
-        <button type="button" class="linkish" id="open-privacy" data-i18n="form_privacy_link"></button>
+          <span id="consent-text" data-i18n="form_consent"></span>
+          <button type="button" class="linkish" id="open-privacy" data-i18n="form_privacy_link"></button>
         </label>
       </div>
 
       <p class="form-error" id="form-error" role="alert" hidden></p>
 
-      <button type="submit" class="btn btn-primary" id="submit-btn" data-i18n="form_submit">
-        ยืนยันและเปิดสิทธิ์ดาวน์โหลด
-      </button>
+      <button type="submit" class="btn btn-primary w-full rounded-full text-white" id="submit-btn"
+              data-i18n="form_submit">ยืนยันและเปิดสิทธิ์ดาวน์โหลด</button>
     </form>
-  </article>
+  </div>
 </dialog>
 
-<dialog id="privacy-dialog" class="dialog">
-  <article>
-    <h2 data-i18n="privacy_heading">ประกาศความเป็นส่วนตัว</h2>
-    <div id="privacy-body"></div>
-    <button type="button" class="btn" id="close-privacy" data-i18n="close">ปิด</button>
-  </article>
+<dialog id="privacy-dialog" class="modal">
+  <div class="modal-box max-w-3xl rounded-panel bg-white">
+    <h2 class="mb-4 text-xl font-bold" data-i18n="privacy_heading">ประกาศความเป็นส่วนตัว</h2>
+    <div id="privacy-body" class="space-y-3 text-sm leading-relaxed text-gray-600"></div>
+    <div class="mt-6 text-right">
+      <button type="button" class="btn rounded-full" id="close-privacy" data-i18n="close">ปิด</button>
+    </div>
+  </div>
 </dialog>
 
 <script src="privacy.js"></script>

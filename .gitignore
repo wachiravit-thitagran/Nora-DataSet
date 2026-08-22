@@ -21,3 +21,6 @@ dist/
 # Staging area for files the Cowork bridge could not unlink. Local rubbish,
 # never part of the project.
 _to_delete/
+
+# Tailwind build inputs — the compiled app/static/style.css is what ships
+node_modules/

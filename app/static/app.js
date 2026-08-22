@@ -97,8 +97,9 @@
       node.textContent = t(node.getAttribute("data-i18n"));
     });
     document.documentElement.lang = state.lang;
-    var toggle = $("#lang-toggle");
-    if (toggle) toggle.textContent = t("switch_to");
+    $$("#lang-toggle, #lang-toggle-sm").forEach(function (btn) {
+      btn.textContent = t("switch_to");
+    });
   }
 
   // ---------------------------------------------------------------- rendering
@@ -119,14 +120,6 @@
     $$('[data-field="dataset.license_note"]').forEach(function (n) {
       n.textContent = pick((ds.license && ds.license.note) || "");
     });
-
-    var disclaimerBox = $("#disclaimer-box");
-    var disclaimer = pick(ds.disclaimer);
-    if (disclaimer) {
-      $('[data-field="dataset.disclaimer"]').textContent = disclaimer;
-    } else if (disclaimerBox) {
-      disclaimerBox.hidden = true;
-    }
 
     /* Both citation formats, with {version} filled in from the manifest so a
        new release cannot leave the citation pointing at the old one. */
@@ -189,7 +182,9 @@
         card.appendChild(el("p", "pending-note", pending));
       }
 
-      var button = el("button", bundle.available ? "btn btn-primary" : "btn");
+      var button = el("button", bundle.available
+        ? "btn btn-primary mt-6 w-full rounded-full text-white"
+        : "btn mt-6 w-full rounded-full");
       button.type = "button";
       if (!bundle.available) {
         // Neutral styling, not a dimmed primary button: an unpublished bundle
@@ -442,8 +437,11 @@
       }
     });
 
-    $("#lang-toggle").addEventListener("click", function () {
-      setLang(state.lang === "th" ? "en" : "th");
+    // Two toggles now: one in the desktop navbar, one in the mobile bar.
+    $$("#lang-toggle, #lang-toggle-sm").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        setLang(state.lang === "th" ? "en" : "th");
+      });
     });
     $("#access-form").addEventListener("submit", handleSubmit);
     $("#close-access").addEventListener("click", closeAccess);
