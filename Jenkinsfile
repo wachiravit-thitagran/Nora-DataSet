@@ -34,9 +34,10 @@ pipeline {
         SERVICE      = 'dataset-web'
         CONTAINER    = 'ainora-dataset-web'
 
-        // The container, reached directly, bypassing nginx.
-        BASE_URL   = 'http://127.0.0.1:10095'
-        // The same service as the public sees it, through the host nginx.
+        // The service as the public sees it, through the host nginx. Only the
+        // best-effort proxy check uses this: the agent is not assumed to be on
+        // the same network as the published port, so every other check runs
+        // inside the container.
         PUBLIC_URL = 'http://127.0.0.1/dataset'
     }
 
@@ -238,70 +239,76 @@ pipeline {
                                 -f "$COMPOSE_FILE" up -d --force-recreate "$SERVICE"
                     '''
 
+                    // Health is read from Docker, not from the host's
+                    // loopback. The agent may not share a network namespace
+                    // with the published port — it often runs as a container
+                    // itself — and then curl to 127.0.0.1:10095 fails even
+                    // though the service is perfectly healthy. The image
+                    // already declares a HEALTHCHECK; this waits on its
+                    // verdict.
                     sh '''
                         set -eu
                         echo "--- waiting for health"
-                        for attempt in $(seq 1 30); do
-                            if curl -fsS "$BASE_URL/api/health" | grep -q '"ok"'; then
+                        for attempt in $(seq 1 60); do
+                            state=$(docker inspect --format='{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo missing)
+                            health=$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$CONTAINER" 2>/dev/null || echo none)
+
+                            if [ "$health" = "healthy" ]; then
                                 echo "healthy after ${attempt}s"
                                 exit 0
                             fi
+
+                            if [ "$state" = "exited" ] || [ "$state" = "dead" ]; then
+                                echo "container stopped on its own (state=$state)" >&2
+                                break
+                            fi
+
                             sleep 1
                         done
-                        echo "service did not become healthy" >&2
-                        docker logs --tail 100 "$CONTAINER" >&2
+
+                        echo "service did not become healthy (state=${state:-?} health=${health:-?})" >&2
+                        echo "--- last health probe ---" >&2
+                        docker inspect --format='{{if .State.Health}}{{range .State.Health.Log}}{{.Output}}{{end}}{{end}}' "$CONTAINER" >&2 || true
+                        echo "--- container logs ---" >&2
+                        docker logs --tail 100 "$CONTAINER" >&2 || true
                         exit 1
                     '''
 
+                    // Run inside the container, over its own loopback, for
+                    // the same reason the health check reads Docker: the agent
+                    // cannot be assumed to reach the published port. The
+                    // service's own SECRET_KEY signs the token, so the download
+                    // is verified end to end without submitting the access form
+                    // — a form submission would write a fake person into the
+                    // PDPA-governed table on every single deploy.
                     sh '''
                         set -eu
+                        docker exec "$CONTAINER" python3 scripts/smoke_check.py
+                    '''
 
-                        echo "--- catalogue responds"
-                        curl -fsS "$BASE_URL/api/catalog" > /dev/null
+                    // Best effort: this is the only check that exercises nginx
+                    // rather than the application alone, but it needs the agent
+                    // to reach the host. If it cannot, that is a fact about the
+                    // agent, not a broken deploy, so it reports and moves on.
+                    sh '''
+                        set -eu
+                        echo "--- through nginx"
+                        code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+                            "$PUBLIC_URL/api/health" 2>/dev/null || echo unreachable)
 
-                        echo "--- download without a token is refused"
-                        code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/api/download/pose-images")
-                        [ "$code" = "403" ] || { echo "expected 403, got $code" >&2; exit 1; }
-
-                        echo "--- forged token is refused"
-                        code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/api/download/pose-images?t=aaa.bbb")
-                        [ "$code" = "403" ] || { echo "expected 403, got $code" >&2; exit 1; }
-
-                        first=$(curl -fsS "$BASE_URL/api/catalog" \
-                            | python3 -c "import json,sys; \
-                                b=[x for x in json.load(sys.stdin)['manifest']['bundles'] if x.get('filename')]; \
-                                print(b[0]['id'] if b else '')")
-
-                        if [ -z "$first" ]; then
-                            echo "--- no bundle published yet, skipping the download check"
-                            exit 0
-                        fi
-
-                        # This one goes through the real nginx, so it exercises
-                        # the proxy configuration and not just the application.
-                        echo "--- a real download returns the whole file"
-
-                        # Mint the token from the secret rather than submitting
-                        # the access form: a form submission would write a fake
-                        # person into the PDPA-governed table on every deploy.
-                        set -a
-                        . ./.env.production
-                        set +a
-                        token=$(python3 scripts/mint_token.py --ttl 300)
-
-                        expected=$(curl -fsS "$BASE_URL/api/catalog" \
-                            | python3 -c "import json,sys; \
-                                b=[x for x in json.load(sys.stdin)['manifest']['bundles'] if x.get('filename')]; \
-                                print(b[0]['bytes'])")
-
-                        got=$(curl -s -o /dev/null -w '%{size_download}' \
-                            "$PUBLIC_URL/api/download/$first?t=$token")
-
-                        [ "$got" = "$expected" ] || {
-                            echo "download returned $got bytes, expected $expected" >&2
-                            exit 1
-                        }
-                        echo "    served $got bytes as expected"
+                        case "$code" in
+                            200) echo "    nginx serves the app at $PUBLIC_URL" ;;
+                            unreachable|000)
+                                echo "    skipped: this agent cannot reach $PUBLIC_URL."
+                                echo "    Verify the proxy by hand once:"
+                                echo "      curl -s https://<host>/dataset/api/health"
+                                ;;
+                            *)
+                                echo "    nginx answered $code for /dataset/api/health" >&2
+                                echo "    the container is healthy, so this points at the proxy config" >&2
+                                exit 1
+                                ;;
+                        esac
                     '''
                 }
             }
