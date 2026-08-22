@@ -286,30 +286,38 @@ pipeline {
                         docker exec "$CONTAINER" python3 scripts/smoke_check.py
                     '''
 
-                    // Best effort: this is the only check that exercises nginx
-                    // rather than the application alone, but it needs the agent
-                    // to reach the host. If it cannot, that is a fact about the
-                    // agent, not a broken deploy, so it reports and moves on.
-                    sh '''
-                        set -eu
-                        echo "--- through nginx"
-                        code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
-                            "$PUBLIC_URL/api/health" 2>/dev/null || echo unreachable)
+                    // The only check that exercises nginx rather than the
+                    // application alone — and the only one that must never fail
+                    // the build. nginx runs on the host, outside anything this
+                    // pipeline deploys, and `post { failure }` rolls the
+                    // container back: a proxy that is merely misconfigured
+                    // would otherwise revert a container that is working.
+                    // A bad answer marks the build unstable and says why.
+                    script {
+                        // No `|| echo`: curl already prints 000 on a failed
+                        // connection, so appending a word produced the
+                        // uninterpretable "000unreachable" and sent this step
+                        // down the failure branch.
+                        def code = sh(
+                            script: """set +e
+curl -s -o /dev/null -w '%{http_code}' --max-time 10 "\$PUBLIC_URL/api/health"
+exit 0""",
+                            returnStdout: true
+                        ).trim()
 
-                        case "$code" in
-                            200) echo "    nginx serves the app at $PUBLIC_URL" ;;
-                            unreachable|000)
-                                echo "    skipped: this agent cannot reach $PUBLIC_URL."
-                                echo "    Verify the proxy by hand once:"
-                                echo "      curl -s https://<host>/dataset/api/health"
-                                ;;
-                            *)
-                                echo "    nginx answered $code for /dataset/api/health" >&2
-                                echo "    the container is healthy, so this points at the proxy config" >&2
-                                exit 1
-                                ;;
-                        esac
-                    '''
+                        echo "--- through nginx"
+                        if (code == "200") {
+                            echo "    nginx serves the app at ${env.PUBLIC_URL}"
+                        } else if (code == "000" || code == "") {
+                            echo "    skipped: this agent cannot reach ${env.PUBLIC_URL}."
+                            echo "    Check the proxy by hand once:"
+                            echo "      curl -s https://<host>/dataset/api/health"
+                        } else {
+                            unstable("nginx answered ${code} for /dataset/api/health. " +
+                                     "The container is healthy and the deploy stands; " +
+                                     "this points at the host nginx config, not at the release.")
+                        }
+                    }
                 }
             }
             post {
