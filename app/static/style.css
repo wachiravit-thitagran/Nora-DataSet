@@ -275,69 +275,6 @@ h3 { font-size: 1.08rem; font-weight: 700; margin: 2.2rem 0 .6rem; color: var(--
 .note-list { padding-inline-start: 1.2rem; color: var(--text-muted); max-width: 48rem; }
 .note-list li { margin-bottom: .55rem; }
 
-/* ---------- pose table ---------- */
-
-.table-scroll {
-  overflow-x: auto;
-  margin-top: 1.4rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.pose-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: .93rem;
-  min-width: 46rem;
-}
-
-.pose-table th, .pose-table td {
-  text-align: start;
-  padding: .85rem 1.1rem;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-.pose-table tbody tr:last-child td { border-bottom: 0; }
-
-.pose-table thead th {
-  font-size: .82rem;
-  font-weight: 600;
-  color: var(--text-soft);
-  background: var(--surface-alt);
-  border-bottom: 1px solid var(--border);
-}
-
-.pose-table tbody tr:hover { background: var(--gold-wash); }
-
-.pose-id {
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  font-size: .84rem;
-  color: var(--text-soft);
-}
-
-.pose-name { font-weight: 700; color: var(--text); }
-.pose-name-en { display: block; font-weight: 400; font-size: .83rem; color: var(--text-soft); }
-
-.alias-list { color: var(--text-soft); font-size: .87rem; }
-
-.tag {
-  display: inline-block;
-  font-size: .76rem;
-  font-weight: 600;
-  padding: .18rem .7rem;
-  border-radius: var(--pill);
-  border: 1px solid var(--border-strong);
-  white-space: nowrap;
-  color: var(--text-muted);
-  background: var(--surface);
-}
-.tag-verified { color: var(--ok); border-color: #a7d3b8; background: #f0f9f3; }
-.tag-mismatch { color: var(--danger); border-color: #eab4b4; background: #fdf2f2; }
-.tag-partial  { color: var(--gold-hover); border-color: var(--warn-border); background: var(--warn-bg); }
-.tag-none     { color: var(--text-soft); }
-
 /* ---------- bundles ---------- */
 
 .bundle-grid {
@@ -583,6 +520,28 @@ h3 { font-size: 1.08rem; font-weight: 700; margin: 2.2rem 0 .6rem; color: var(--
 }
 
 /* ---------- dialog ---------- */
+
+/* The access form as a modal: wider than the privacy notice, and with room
+   for the close control in the corner. */
+.dialog-form { max-width: 34rem; width: min(34rem, calc(100% - 2rem)); }
+.dialog-form article { position: relative; }
+.dialog-form h2 { margin-top: 0; padding-right: 2rem; }
+
+.dialog-close {
+  position: absolute;
+  top: -.25rem;
+  right: -.25rem;
+  border: 0;
+  background: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  padding: .25rem .5rem;
+  color: var(--text-soft);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+.dialog-close:hover { color: var(--text); background: var(--surface-alt); }
+.dialog-close:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .dialog {
   border: 1px solid var(--border);

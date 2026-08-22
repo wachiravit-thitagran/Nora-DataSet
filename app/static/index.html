@@ -22,7 +22,6 @@
     </div>
     <nav class="site-nav" aria-label="Sections">
       <a href="#about" data-i18n="nav_about">เกี่ยวกับชุดข้อมูล</a>
-      <a href="#poses" data-i18n="nav_poses">ท่ารำ</a>
       <a href="#download" data-i18n="nav_download">ดาวน์โหลด</a>
       <a href="#usage" data-i18n="nav_usage">ไฟล์ในชุดข้อมูล</a>
       <a href="#terms" data-i18n="nav_terms">เงื่อนไขและการอ้างอิง</a>
@@ -65,33 +64,6 @@
     </div>
   </section>
 
-  <section id="poses" class="wrap section">
-    <h2 data-i18n="poses_heading">ท่ารำมาตรฐาน 12 ท่า</h2>
-    <p class="prose" data-i18n="poses_intro"></p>
-
-    <div class="table-scroll">
-      <table class="pose-table">
-        <thead>
-          <tr>
-            <th scope="col" data-i18n="poses_col_id">รหัส</th>
-            <th scope="col" data-i18n="poses_col_name">ชื่อท่า</th>
-            <th scope="col" data-i18n="poses_col_desc">ลักษณะท่า</th>
-            <th scope="col" data-i18n="poses_col_alias">ชื่ออื่นที่พบ</th>
-            <th scope="col" data-i18n="poses_col_status">สถานะภาพ</th>
-          </tr>
-        </thead>
-        <tbody id="pose-rows">
-          <tr><td colspan="5" class="muted" data-i18n="loading">กำลังโหลด…</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div id="unmapped-block" hidden>
-      <h3 data-i18n="unmapped_heading">รายการที่รอการตรวจสอบ</h3>
-      <ul class="note-list" id="unmapped-list"></ul>
-    </div>
-  </section>
-
   <section id="download" class="wrap section">
     <h2 data-i18n="download_heading">ดาวน์โหลดชุดข้อมูล</h2>
     <p class="prose" data-i18n="download_intro"></p>
@@ -103,60 +75,6 @@
 
     <div class="bundle-grid" id="bundle-grid"></div>
 
-    <div class="access-card" id="access-card">
-      <h3 data-i18n="form_heading">ขอสิทธิ์ดาวน์โหลด</h3>
-      <form id="access-form" novalidate>
-        <div class="field">
-          <label for="f-email" data-i18n="form_email">อีเมล</label>
-          <input type="email" id="f-email" name="email" required autocomplete="email" inputmode="email">
-          <p class="hint" data-i18n="form_email_hint"></p>
-        </div>
-
-        <div class="field">
-          <label for="f-org">
-            <span data-i18n="form_org">หน่วยงาน / สังกัด</span>
-            <span class="optional" data-i18n="form_org_optional">ไม่บังคับ</span>
-          </label>
-          <input type="text" id="f-org" name="organization" autocomplete="organization" maxlength="200">
-        </div>
-
-        <div class="field">
-          <label for="f-purpose" data-i18n="form_purpose">วัตถุประสงค์การนำไปใช้</label>
-          <select id="f-purpose" name="purpose" required>
-            <option value="" data-i18n="form_purpose_placeholder">เลือกวัตถุประสงค์</option>
-            <option value="research" data-i18n="purpose_research"></option>
-            <option value="education" data-i18n="purpose_education"></option>
-            <option value="cultural_preservation" data-i18n="purpose_cultural_preservation"></option>
-            <option value="journalism" data-i18n="purpose_journalism"></option>
-            <option value="commercial" data-i18n="purpose_commercial"></option>
-            <option value="personal" data-i18n="purpose_personal"></option>
-            <option value="other" data-i18n="purpose_other"></option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="f-detail">
-            <span data-i18n="form_detail">รายละเอียดเพิ่มเติม</span>
-            <span class="optional" data-i18n="form_detail_optional">ถ้ามี</span>
-          </label>
-          <textarea id="f-detail" name="purpose_detail" rows="3" maxlength="1000"></textarea>
-        </div>
-
-        <div class="field field-check">
-          <input type="checkbox" id="f-consent" name="consent" required>
-          <label for="f-consent">
-            <span id="consent-text" data-i18n="form_consent"></span>
-            <button type="button" class="linkish" id="open-privacy" data-i18n="form_privacy_link"></button>
-          </label>
-        </div>
-
-        <p class="form-error" id="form-error" role="alert" hidden></p>
-
-        <button type="submit" class="btn btn-primary" id="submit-btn" data-i18n="form_submit">
-          ยืนยันและเปิดสิทธิ์ดาวน์โหลด
-        </button>
-      </form>
-    </div>
   </section>
 
   <section id="usage" class="wrap section">
@@ -191,6 +109,64 @@
     <button type="button" class="linkish" id="open-privacy-footer" data-i18n="privacy_heading">ประกาศความเป็นส่วนตัว</button>
   </div>
 </footer>
+
+<dialog id="access-dialog" class="dialog dialog-form">
+  <article>
+    <button type="button" class="dialog-close" id="close-access" aria-label="Close">&times;</button>
+    <h2 data-i18n="form_heading">ขอสิทธิ์ดาวน์โหลด</h2>
+    <form id="access-form" novalidate>
+      <div class="field">
+        <label for="f-email" data-i18n="form_email">อีเมล</label>
+        <input type="email" id="f-email" name="email" required autocomplete="email" inputmode="email">
+        <p class="hint" data-i18n="form_email_hint"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-org">
+        <span data-i18n="form_org">หน่วยงาน / สังกัด</span>
+        <span class="optional" data-i18n="form_org_optional">ไม่บังคับ</span>
+        </label>
+        <input type="text" id="f-org" name="organization" autocomplete="organization" maxlength="200">
+      </div>
+
+      <div class="field">
+        <label for="f-purpose" data-i18n="form_purpose">วัตถุประสงค์การนำไปใช้</label>
+        <select id="f-purpose" name="purpose" required>
+        <option value="" data-i18n="form_purpose_placeholder">เลือกวัตถุประสงค์</option>
+        <option value="research" data-i18n="purpose_research"></option>
+        <option value="education" data-i18n="purpose_education"></option>
+        <option value="cultural_preservation" data-i18n="purpose_cultural_preservation"></option>
+        <option value="journalism" data-i18n="purpose_journalism"></option>
+        <option value="commercial" data-i18n="purpose_commercial"></option>
+        <option value="personal" data-i18n="purpose_personal"></option>
+        <option value="other" data-i18n="purpose_other"></option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="f-detail">
+        <span data-i18n="form_detail">รายละเอียดเพิ่มเติม</span>
+        <span class="optional" data-i18n="form_detail_optional">ถ้ามี</span>
+        </label>
+        <textarea id="f-detail" name="purpose_detail" rows="3" maxlength="1000"></textarea>
+      </div>
+
+      <div class="field field-check">
+        <input type="checkbox" id="f-consent" name="consent" required>
+        <label for="f-consent">
+        <span id="consent-text" data-i18n="form_consent"></span>
+        <button type="button" class="linkish" id="open-privacy" data-i18n="form_privacy_link"></button>
+        </label>
+      </div>
+
+      <p class="form-error" id="form-error" role="alert" hidden></p>
+
+      <button type="submit" class="btn btn-primary" id="submit-btn" data-i18n="form_submit">
+        ยืนยันและเปิดสิทธิ์ดาวน์โหลด
+      </button>
+    </form>
+  </article>
+</dialog>
 
 <dialog id="privacy-dialog" class="dialog">
   <article>

@@ -13,7 +13,10 @@
     strings: {},
     manifest: null,
     poses: null,
-    access: null
+    access: null,
+    // The bundle whose button opened the form, so the download the visitor
+    // actually asked for starts by itself once access is granted.
+    pendingBundle: null
   };
 
   // ---------------------------------------------------------------- helpers
@@ -157,61 +160,6 @@
     }
   }
 
-  function identityTag(match, hasRestored) {
-    if (hasRestored === false) return { label: t("no_restored"), cls: "tag-none" };
-    switch (match) {
-      case "verified": return { label: t("identity_verified"), cls: "tag-verified" };
-      case "mismatch": return { label: t("identity_mismatch"), cls: "tag-mismatch" };
-      case "partial": return { label: t("identity_partial"), cls: "tag-partial" };
-      default: return { label: t("identity_not_applicable"), cls: "tag-none" };
-    }
-  }
-
-  function renderPoses() {
-    var tbody = $("#pose-rows");
-    if (!tbody) return;
-    tbody.textContent = "";
-
-    (state.poses.poses || []).forEach(function (pose) {
-      var tr = el("tr");
-
-      tr.appendChild(el("td", "pose-id", pose.id));
-
-      var nameCell = el("td");
-      nameCell.appendChild(el("span", "pose-name", state.lang === "th" ? pose.name_th : pose.name_en));
-      nameCell.appendChild(el("span", "pose-name-en", state.lang === "th" ? pose.name_en : pose.name_th));
-      tr.appendChild(nameCell);
-
-      tr.appendChild(el("td", null, state.lang === "th" ? pose.description_th : pose.description_en));
-
-      var aliases = (pose.aliases || []).filter(function (a) { return !/^[a-z_]+$/.test(a); });
-      tr.appendChild(el("td", "alias-list", aliases.length ? aliases.join(", ") : "—"));
-
-      var tag = identityTag(pose.identity_match, pose.has_restored);
-      var statusCell = el("td");
-      statusCell.appendChild(el("span", "tag " + tag.cls, tag.label));
-      tr.appendChild(statusCell);
-
-      tbody.appendChild(tr);
-    });
-
-    var unmapped = state.poses.unmapped || [];
-    var block = $("#unmapped-block");
-    var list = $("#unmapped-list");
-    if (block && list) {
-      list.textContent = "";
-      if (unmapped.length) {
-        unmapped.forEach(function (item) {
-          list.appendChild(el("li", null,
-            (state.lang === "th" ? item.note_th : item.note_en) || item.status));
-        });
-        block.hidden = false;
-      } else {
-        block.hidden = true;
-      }
-    }
-  }
-
   function renderBundles() {
     var grid = $("#bundle-grid");
     if (!grid) return;
@@ -259,8 +207,7 @@
       } else if (!state.access) {
         button.textContent = t("btn_download");
         button.addEventListener("click", function () {
-          $("#access-card").scrollIntoView({ block: "center" });
-          $("#f-email").focus();
+          openAccess(bundle.id);
         });
       } else {
         button.textContent = t("btn_download");
@@ -317,17 +264,14 @@
 
   function renderGrantBanner() {
     var banner = $("#grant-banner");
-    var card = $("#access-card");
-    if (!banner || !card) return;
+    if (!banner) return;
 
     if (state.access) {
       banner.hidden = false;
       $("#grant-detail").textContent =
         t("access_granted_detail").replace("{time}", formatTime(state.access.expires_at));
-      card.hidden = true;
     } else {
       banner.hidden = true;
-      card.hidden = false;
     }
   }
 
@@ -335,7 +279,6 @@
     applyStaticStrings();
     if (!state.manifest) return;
     renderDataset();
-    renderPoses();
     renderGrantBanner();
     renderBundles();
     renderContents();
@@ -406,15 +349,46 @@
       return response.json();
     }).then(function (data) {
       saveAccess({ token: data.token, expires_at: data.expires_at });
+      closeAccess();
       renderGrantBanner();
       renderBundles();
-      $("#grant-banner").scrollIntoView({ block: "center" });
+
+      // Carry on with the download the visitor actually asked for. Without
+      // this they would fill in the form, watch the dialog close, and have to
+      // find the same button again.
+      var wanted = state.pendingBundle;
+      state.pendingBundle = null;
+      if (wanted) {
+        startDownload(wanted);
+      } else {
+        $("#grant-banner").scrollIntoView({ block: "center" });
+      }
     }).catch(function (err) {
       showFormError(err.message === "rate" ? "form_error_rate" : "form_error_generic");
     }).finally(function () {
       button.disabled = false;
       button.textContent = t("form_submit");
     });
+  }
+
+  // ------------------------------------------------------------ access form
+
+  function openAccess(bundleId) {
+    state.pendingBundle = bundleId || null;
+    clearFormError();
+    var dialog = $("#access-dialog");
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+    // Focus the first field rather than the close button, so a keyboard user
+    // lands where the work is.
+    var email = $("#f-email");
+    if (email) email.focus();
+  }
+
+  function closeAccess() {
+    var dialog = $("#access-dialog");
+    if (typeof dialog.close === "function") dialog.close();
+    else dialog.removeAttribute("open");
   }
 
   // ------------------------------------------------------------------ privacy
@@ -469,18 +443,23 @@
       state.lang = initialLang();
       renderAll();
     }).catch(function () {
-      var tbody = $("#pose-rows");
-      if (tbody) tbody.textContent = "";
-      var row = el("tr");
-      row.appendChild(el("td", "muted", t("load_error")));
-      row.firstChild.colSpan = 5;
-      if (tbody) tbody.appendChild(row);
+      var grid = $("#bundle-grid");
+      if (grid) {
+        grid.textContent = "";
+        grid.appendChild(el("p", "muted", t("load_error")));
+      }
     });
 
     $("#lang-toggle").addEventListener("click", function () {
       setLang(state.lang === "th" ? "en" : "th");
     });
     $("#access-form").addEventListener("submit", handleSubmit);
+    $("#close-access").addEventListener("click", closeAccess);
+    // Esc fires `cancel` on a native dialog; let it through but keep the
+    // pending bundle from leaking into the next attempt.
+    $("#access-dialog").addEventListener("close", function () {
+      state.pendingBundle = null;
+    });
     $("#open-privacy").addEventListener("click", openPrivacy);
     $("#open-privacy-footer").addEventListener("click", openPrivacy);
     $("#close-privacy").addEventListener("click", closePrivacy);
