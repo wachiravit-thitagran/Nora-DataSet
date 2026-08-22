@@ -128,35 +128,27 @@
       disclaimerBox.hidden = true;
     }
 
-    var pill = $("#status-pill");
-    if (pill) {
-      var released = ds.status === "released" || ds.status === "published";
-      pill.textContent = released ? t("status_published") : t("status_draft");
-      pill.classList.toggle("is-released", released);
-      pill.hidden = false;
+    /* Both citation formats, with {version} filled in from the manifest so a
+       new release cannot leave the citation pointing at the old one. */
+    function withVersion(text) {
+      return String(text || "").replace(/\{version\}/g, ds.version || "");
     }
 
     var citation = $("#citation-text");
     if (citation) {
-      citation.textContent = (ds.citation && (ds.citation.bibtex || ds.citation.text)) || "TBD";
+      citation.textContent = withVersion((ds.citation && ds.citation.text) || "—");
     }
-
-    var credits = $("#credits-list");
-    if (credits) {
-      credits.textContent = "";
-      (ds.credits || []).forEach(function (item) {
-        var li = el("li");
-        li.appendChild(el("strong", null, pick(item.role) + ": "));
-        li.appendChild(document.createTextNode(pick(item.value)));
-        credits.appendChild(li);
-      });
+    var bibtex = $("#citation-bibtex");
+    if (bibtex) {
+      bibtex.textContent = withVersion((ds.citation && ds.citation.bibtex) || "—");
     }
 
     var contact = $("#contact-text");
-    if (contact && ds.contact) {
-      var parts = [ds.contact.name, ds.contact.organization, ds.contact.email]
-        .filter(function (p) { return p && p !== "TBD"; });
-      contact.textContent = parts.length ? parts.join(" · ") : "TBD";
+    if (contact && ds.contact && ds.contact.email) {
+      contact.textContent = "";
+      var mail = el("a", null, ds.contact.email);
+      mail.href = "mailto:" + ds.contact.email;
+      contact.appendChild(mail);
     }
   }
 
@@ -461,7 +453,6 @@
       state.pendingBundle = null;
     });
     $("#open-privacy").addEventListener("click", openPrivacy);
-    $("#open-privacy-footer").addEventListener("click", openPrivacy);
     $("#close-privacy").addEventListener("click", closePrivacy);
   }
 

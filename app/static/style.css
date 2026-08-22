@@ -198,25 +198,6 @@ body {
   margin: 0 0 2rem;
 }
 
-/* Eyebrow pill, as on the parent site's hero. No uppercase or letter-spacing:
-   the label is Thai, and neither does anything good to Thai script. */
-.status-pill {
-  display: inline-block;
-  margin: 0 0 .5rem;
-  padding: .32rem 1rem;
-  font-size: .8rem;
-  font-weight: 600;
-  border-radius: var(--pill);
-  background: var(--warn-bg);
-  border: 1px solid var(--warn-border);
-  color: #92700f;
-}
-.status-pill.is-released {
-  background: var(--surface);
-  border-color: var(--gold);
-  color: var(--gold-hover);
-}
-
 .meta-row {
   display: flex;
   flex-wrap: wrap;
@@ -447,6 +428,13 @@ h3 { font-size: 1.08rem; font-weight: 700; margin: 2.2rem 0 .6rem; color: var(--
 }
 .code code { white-space: pre; }
 
+.cite-label {
+  margin: 1.4rem 0 .4rem;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
 /* ---------- bundle contents ---------- */
 
 .contents {
@@ -563,17 +551,59 @@ h3 { font-size: 1.08rem; font-weight: 700; margin: 2.2rem 0 .6rem; color: var(--
 /* ---------- footer ---------- */
 
 .site-footer {
-  border-top: 1px solid var(--border);
-  padding: 2.4rem 0 3.5rem;
-  font-size: .88rem;
-  color: var(--text-soft);
   background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 3rem 0 3.5rem;
+  font-size: .9rem;
+  color: var(--text-muted);
 }
-.site-footer .wrap {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
+
+.footer-inner {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1.4fr) repeat(3, minmax(11rem, 1fr));
+  gap: 2rem 2.5rem;
+  align-items: start;
 }
-.site-footer p { margin: 0; }
+
+.footer-title {
+  display: inline-block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--text);
+  text-decoration: none;
+}
+.footer-title:hover { color: var(--gold-hover); }
+
+.footer-tagline {
+  margin: .6rem 0 0;
+  max-width: 24rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* h2 for the document outline, sized as a small label so it does not compete
+   with the section headings above it. */
+.footer-office h2 {
+  margin: 0 0 .5rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+.footer-office address {
+  font-style: normal;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+.footer-office a { color: var(--text-muted); text-decoration: none; }
+.footer-office a:hover { color: var(--gold-hover); text-decoration: underline; }
+
+@media (max-width: 60rem) {
+  .footer-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 34rem) {
+  .footer-inner { grid-template-columns: 1fr; gap: 1.8rem; }
+}

@@ -10,7 +10,7 @@
       "en": "Nora Dance Dataset"
     },
     "summary": {
-      "th": "ชุดข้อมูลท่ารำโนราสำหรับงานวิจัยด้านปัญญาประดิษฐ์ ประกอบด้วยภาพท่ารำ 12 ท่าพร้อมชื่อท่า วิดีโอที่สร้างด้วย AI และตำแหน่งท่า (pose position) ที่สกัดด้วยคอมพิวเตอร์วิทัศน์",
+      "th": "ชุดข้อมูลท่ารำโนราสำหรับงานวิจัยด้านปัญญาประดิษฐ์ ประกอบด้วยภาพท่าครู 12 ท่าพร้อมชื่อท่า วิดีโอที่สร้างด้วย AI และตำแหน่งท่า (pose position) ที่สกัดด้วยคอมพิวเตอร์วิทัศน์",
       "en": "A dataset of Nora (southern Thai) dance for AI research: the twelve canonical pose images with labels, AI-generated video, and computer-vision-extracted pose positions."
     },
     "description": {
@@ -20,47 +20,24 @@
     "license": {
       "id": "TBD",
       "name": {
-        "th": "อยู่ระหว่างพิจารณา",
+        "th": "รอการกำหนด",
         "en": "To be determined"
       },
       "url": null,
       "status": "pending",
       "note": {
-        "th": "สัญญาอนุญาตอยู่ระหว่างการพิจารณาของผู้บริหาร ระหว่างนี้การนำข้อมูลไปใช้ต้องได้รับอนุญาตเป็นลายลักษณ์อักษรจากผู้จัดทำก่อน",
-        "en": "The licence is pending approval. Until it is published, any use of this data requires prior written permission from the maintainers."
+        "th": "รอการกำหนด",
+        "en": "To be determined"
       }
     },
     "citation": {
-      "text": "TBD",
-      "bibtex": null
+      "text": "AINORA, \"Nora Dance Dataset (version {version}),\" Digital Innovation and Intelligent Systems, Prince of Songkla University, Songkhla, Thailand, 2026. [Online]. Available: https://ainora.psu.ac.th/dataset/",
+      "style": "IEEE",
+      "bibtex": "@misc{ainora_nora_dance_dataset,\n  title        = {Nora Dance Dataset},\n  author       = {{AINORA, Digital Innovation and Intelligent Systems, Prince of Songkla University}},\n  year         = {2026},\n  howpublished = {\\url{https://ainora.psu.ac.th/dataset/}},\n  note         = {Version {version}}\n}"
     },
     "contact": {
-      "name": "TBD",
-      "email": "TBD",
-      "organization": "TBD"
+      "email": "ainora@psu.ac.th"
     },
-    "credits": [
-      {
-        "role": {
-          "th": "ภาพต้นฉบับ",
-          "en": "Source imagery"
-        },
-        "value": {
-          "th": "ภาพสแกนจากหนังสือ (รอระบุชื่อหนังสือและปีที่พิมพ์)",
-          "en": "Scanned from a printed book (title and year of publication to be confirmed)"
-        }
-      },
-      {
-        "role": {
-          "th": "ผู้ตรวจสอบท่ารำ",
-          "en": "Dance verification"
-        },
-        "value": {
-          "th": "รอผู้เชี่ยวชาญด้านโนราตรวจสอบ",
-          "en": "Pending review by Nora practitioners"
-        }
-      }
-    ],
     "disclaimer": {
       "th": "ภาพในหมวด “ซ่อมแซม” เป็นภาพที่สร้างขึ้นใหม่ด้วยปัญญาประดิษฐ์จากภาพสแกนต้นฉบับ ไม่ใช่การกู้คืนภาพถ่ายเดิม ใบหน้าในภาพทั้งหมดเป็นใบหน้าที่ AI สังเคราะห์ขึ้น และไม่ได้แทนอัตลักษณ์ของบุคคลจริงในภาพต้นฉบับ ทุกรายการระบุสถานะไว้ในฟิลด์ identity_match",
       "en": "Images marked “restored” are AI-generated reconstructions derived from scanned originals, not recoveries of the original photographs. All faces are synthetic and do not represent the identity of any person in the source images. Per-item status is recorded in the identity_match field."
@@ -70,8 +47,8 @@
     {
       "id": "pose-images",
       "title": {
-        "th": "ภาพท่ารำ 12 ท่า พร้อมชื่อท่า",
-        "en": "Twelve pose images with labels"
+        "th": "ภาพท่าครู 12 ท่า พร้อมชื่อท่า",
+        "en": "Twelve canonical pose images with labels"
       },
       "description": {
         "th": "ภาพท่ารำมาตรฐาน 12 ท่า คู่กันระหว่างภาพสแกนต้นฉบับจากหนังสือกับภาพที่ซ่อมแซมด้วย AI พร้อมไฟล์ label ที่ระบุชื่อท่า คำอธิบายลักษณะท่า ชื่ออื่นที่เคยใช้เรียก และสถานะการตรวจอัตลักษณ์รายภาพ",

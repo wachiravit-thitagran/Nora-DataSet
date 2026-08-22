@@ -34,7 +34,6 @@
 
   <section class="hero">
     <div class="wrap">
-      <p class="status-pill" id="status-pill" hidden></p>
       <h1 data-field="dataset.title">&nbsp;</h1>
       <p class="lede" data-field="dataset.summary">&nbsp;</p>
       <dl class="meta-row">
@@ -92,10 +91,10 @@
     </div>
 
     <h3 data-i18n="citation_heading">การอ้างอิง</h3>
-    <pre class="code"><code id="citation-text">TBD</code></pre>
-
-    <h3 data-i18n="credits_heading">ผู้จัดทำและแหล่งที่มา</h3>
-    <ul class="note-list" id="credits-list"></ul>
+    <p class="cite-label" data-i18n="citation_ieee">IEEE</p>
+    <pre class="code"><code id="citation-text">—</code></pre>
+    <p class="cite-label" data-i18n="citation_bibtex">BibTeX</p>
+    <pre class="code"><code id="citation-bibtex">—</code></pre>
 
     <h3 data-i18n="contact_heading">ติดต่อ</h3>
     <p id="contact-text" class="prose">—</p>
@@ -104,9 +103,45 @@
 </main>
 
 <footer class="site-footer">
-  <div class="wrap">
-    <p data-field="dataset.title">&nbsp;</p>
-    <button type="button" class="linkish" id="open-privacy-footer" data-i18n="privacy_heading">ประกาศความเป็นส่วนตัว</button>
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <!-- ainora.psu.ac.th is the project's home; this site is one part of it. -->
+      <a class="footer-title" href="https://ainora.psu.ac.th">AINORA</a>
+      <p class="footer-tagline">โครงการอนุรักษ์มรดกทางวัฒนธรรมและภูมิปัญญาไทย
+        ผ่านนวัตกรรมดิจิทัลเพื่อการเรียนรู้ที่ยั่งยืน</p>
+    </div>
+
+    <!-- Both languages are always shown, labelled, rather than following the
+         page toggle: an address is read by whoever needs to reach the office,
+         and that is not always the reader who set the language. -->
+    <div class="footer-office">
+      <h2>Office (EN)</h2>
+      <address>
+        Digital Innovation and Intelligent Systems,<br>
+        Prince of Songkla University<br>
+        15 Karnchanavanich Rd., Hat Yai,<br>
+        Songkhla 90110 Thailand
+      </address>
+    </div>
+
+    <div class="footer-office">
+      <h2>สำนักงาน (TH)</h2>
+      <address>
+        สำนักนวัตกรรมดิจิทัลและระบบอัจฉริยะ<br>
+        มหาวิทยาลัยสงขลานครินทร์<br>
+        15 ถ.กาญจนวณิชย์ ต.หาดใหญ่<br>
+        อ.หาดใหญ่ จ.สงขลา 90110
+      </address>
+    </div>
+
+    <div class="footer-office">
+      <h2>ติดต่อเรา</h2>
+      <address>
+        <a href="https://diis.psu.ac.th/">diis.psu.ac.th</a><br>
+        <a href="tel:+6674282119">074-282119</a><br>
+        <a href="mailto:ainora@psu.ac.th">ainora@psu.ac.th</a>
+      </address>
+    </div>
   </div>
 </footer>
 
