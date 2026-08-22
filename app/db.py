@@ -8,15 +8,19 @@ personal data is erased.
 
 from __future__ import annotations
 
+import logging
 import os
 import sqlite3
 import threading
+import time
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Iterator
 
 from .config import settings
+
+logger = logging.getLogger("nora.db")
 
 _local = threading.local()
 
@@ -77,12 +81,50 @@ def _connect() -> sqlite3.Connection:
 
     conn = sqlite3.connect(path, timeout=15, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+
     # WAL keeps readers from blocking the writer; without it, concurrent
     # downloads and form submissions contend for the same database lock.
-    conn.execute("PRAGMA journal_mode=WAL")
+    #
+    # Switching a database into WAL takes an exclusive lock, and SQLite does
+    # not run the busy handler for that pragma — it returns SQLITE_BUSY at
+    # once. With several uvicorn workers starting together on a fresh file,
+    # they all attempt the switch and all but one die on "database is locked".
+    # Reading the mode first makes the switch a no-op once any process has
+    # done it, and the retry covers the genuine race on first boot.
+    if _journal_mode(conn) != "wal":
+        _enable_wal(conn)
+
     conn.execute("PRAGMA synchronous=NORMAL")
     conn.execute("PRAGMA foreign_keys=ON")
     return conn
+
+
+def _journal_mode(conn: sqlite3.Connection) -> str:
+    row = conn.execute("PRAGMA journal_mode").fetchone()
+    return (row[0] if row else "").lower()
+
+
+def _enable_wal(conn: sqlite3.Connection, attempts: int = 10) -> None:
+    for attempt in range(attempts):
+        try:
+            conn.execute("PRAGMA journal_mode=WAL")
+            return
+        except sqlite3.OperationalError as exc:
+            if "locked" not in str(exc) and "busy" not in str(exc).lower():
+                raise
+            # Another process is mid-switch. Once it finishes, the mode is
+            # already what we want and the next read settles it.
+            time.sleep(0.1 * (attempt + 1))
+            if _journal_mode(conn) == "wal":
+                return
+    # Not fatal: the database still works in its default journal mode, just
+    # with coarser locking. Refusing to start over this would be worse.
+    logger.warning(
+        "could not switch %s to WAL after %d attempts; continuing in %s mode",
+        settings.db_path,
+        attempts,
+        _journal_mode(conn),
+    )
 
 
 def get_connection() -> sqlite3.Connection:

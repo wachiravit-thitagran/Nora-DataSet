@@ -24,6 +24,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 COPY scripts ./scripts
+COPY docker-entrypoint.sh ./
 
 # Last, and on its own layer: the bundles are the largest and most frequently
 # replaced content, so everything above stays cached when only data changes.
@@ -40,6 +41,7 @@ COPY data ./data
 # "sqlite3.OperationalError: unable to open database file".
 RUN useradd --system --uid 10001 --create-home --shell /usr/sbin/nologin nora \
     && mkdir -p /var/lib/nora \
+    && chmod +x /srv/app/docker-entrypoint.sh \
     && chown -R nora:nora /srv/app /var/lib/nora
 USER nora
 
@@ -51,6 +53,10 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 # Four workers because this process also streams the bundle bytes. Downloads
 # run on the event loop, so slow clients do not block it, but concurrent
 # transfers do compete for CPU with the page and API requests.
+# The entrypoint creates the schema in a single process before the workers
+# start; CMD stays a plain uvicorn invocation so it can still be overridden.
+ENTRYPOINT ["/srv/app/docker-entrypoint.sh"]
+
 CMD ["uvicorn", "app.main:app", \
      "--host", "0.0.0.0", \
      "--port", "8000", \
